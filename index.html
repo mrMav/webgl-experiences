@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <title>Webgl</title>
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: monospace;
+        }
+
+        canvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <canvas id="c">No support</canvas>
+
+    <!-- lib -->
+    <script src="twgl-full.min.js"></script>
+    <!-- shaders -->
+    <script id="vs" type="notjs">
+
+        uniform mat4 u_worldViewProjection;
+        uniform mat4 u_world;
+        uniform mat4 u_viewInverse;
+        uniform mat4 u_worldInverseTranspose;
+
+        attribute vec4 a_position;
+        attribute vec4 a_normal;
+        attribute vec4 a_texcoord;
+
+        void main() {
+            
+
+            gl_Position = u_worldViewProjection * a_position;
+
+        }
+
+    </script>
+    <script id="fs" type="notjs">
+
+        precision mediump float;
+
+        uniform float u_time;
+
+        void main() {
+
+        //vec2 uv = gl_FragCoord.xy / resolution;
+
+        gl_FragColor = vec4((cos(u_time) + 1.0) / 2.0, (sin(u_time) + 1.0) / 2.0, (sin(-u_time) + 1.0) / 2.0, 1.0);
+
+        }
+
+    </script>
+    <!-- app -->
+    <script src="index.js"></script>
+
+</body>
+
+
+</html>
