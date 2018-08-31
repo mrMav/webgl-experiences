@@ -10,13 +10,11 @@
 
         body {
             margin: 0;
-            font-family: monospace;
         }
 
         canvas {
             display: block;
-            width: 100vw;
-            height: 100vh;
+            margin: 0;
         }
     </style>
 
@@ -41,9 +39,23 @@
         attribute vec4 a_texcoord;
 
         void main() {
-            
 
-            gl_Position = u_worldViewProjection * a_position;
+        gl_Position = u_worldViewProjection * a_position;
+
+        }
+
+    </script>
+    <script id="vs_line" type="notjs">
+
+        uniform mat4 u_matrix;
+
+        attribute vec4 a_position;
+        attribute vec4 a_normal;
+        attribute vec4 a_texcoord;
+
+        void main() {
+
+        gl_Position = u_matrix * a_position;
 
         }
 
@@ -63,7 +75,25 @@
         }
 
     </script>
+    <script id="fs_line" type="notjs">
+
+        precision mediump float;
+
+        uniform vec4 u_color;
+
+        void main() {
+
+        //vec2 uv = gl_FragCoord.xy / resolution;
+
+        gl_FragColor = u_color;
+
+        }
+
+    </script>
+
     <!-- app -->
+    <script src="Key.js"></script>
+    <script src="Keyboard.js"></script>
     <script src="index.js"></script>
 
 </body>
