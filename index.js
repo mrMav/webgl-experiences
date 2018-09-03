@@ -11,7 +11,7 @@ twgl.setDefaults({ attribPrefix: "a_" });
 gl.canvas.width  = 640;
 gl.canvas.height = 480;
 
-const programInfo = twgl.createProgramInfo(gl, ["vs_line", "fs"]);
+const programInfo = twgl.createProgramInfo(gl, ["vs", "fs"]);
 const lineProgramInfo = twgl.createProgramInfo(gl, ["vs_line", "fs_line"]);
 
 const board = [
@@ -30,11 +30,28 @@ const board = [
 
 // the plane object we want to render
 // we will use a basic pure white shader
-const planeBufferInfo = twgl.primitives.createPlaneBufferInfo(gl, 2, 2);
+const planeBufferInfo = twgl.primitives.createPlaneBufferInfo(gl, 10, 10);
 
 const camera = m4.identity();
 const view = m4.identity();
 const viewProjection = m4.identity();
+
+const myplanearrays = {
+
+    position: [
+
+        -20.0, -20.0, 0.0,
+        -20.0, 20.0, 0.0,
+        20.0, -20.0, 0.0,
+
+        -20.0, 20.0, 0.0,
+        20.0, -20.0, 0.0,
+        20.0, 20.0, 0.0
+        
+    ]
+
+}
+const myplaneBufferInfo = twgl.createBufferInfoFromArrays(gl, myplanearrays);
 
 const uniforms = {
 
@@ -45,8 +62,9 @@ const uniforms = {
 
     u_matrix: m4.identity(),
 
-    u_time: 1
+    u_color: [0.5, 0.5, 0.0, 1.0],
 
+    u_time: 0
 };
 
 const planePosition = [0, 0, 0];
@@ -118,60 +136,61 @@ function render(time) {
     const aspect = gl.canvas.width / gl.canvas.height;
     //const projection = m4.ortho(-aspect, aspect, 1, -1, -1, 1);
     const projection = m4.ortho(-gl.canvas.width / 2, gl.canvas.width / 2, gl.canvas.height / 2, -gl.canvas.height / 2, -1, 1);
-    // --- render axis lines ----
-
+    
     //const viewOffset = [-gl.canvas.width / 2, -gl.canvas.height / 2, 0];
     m4.translate(projection, cameraPosition, projection);
 
-    xlineuniforms.u_matrix = projection;
-    ylineuniforms.u_matrix = projection;
-    
-    gl.useProgram(lineProgramInfo.program);
-    twgl.setBuffersAndAttributes(gl, lineProgramInfo, xlinebufferinfo);
-    twgl.setUniforms(lineProgramInfo, xlineuniforms);
-    twgl.drawBufferInfo(gl, xlinebufferinfo, gl.LINES);
 
-    gl.useProgram(lineProgramInfo.program);
-    twgl.setBuffersAndAttributes(gl, lineProgramInfo, zlinebufferinfo);
-    twgl.setUniforms(lineProgramInfo, ylineuniforms);
-    twgl.drawBufferInfo(gl, zlinebufferinfo, gl.LINES);
+    // --- draw quad
 
-    // --- 
+    uniforms.u_worldViewProjection = projection;
+    uniforms.u_time = time;
 
-    // for each board position, render a quad
-    // only if the value is 1
-    for (let y = 0; y < board.length; y++) {
+    gl.useProgram(programInfo.program);
+    twgl.setBuffersAndAttributes(gl, programInfo, myplaneBufferInfo);
+    twgl.setUniforms(programInfo, uniforms);
+    twgl.drawBufferInfo(gl, myplaneBufferInfo);
 
-        for (let x = 0; x < board[0].length; x++) {
+    // ---
 
-            if (board[y][x] === 1) {
+    //// for each board position, render a quad
+    //// only if the value is 1
+    //for (let y = 0; y < board.length; y++) {
 
-                // render
+    //    for (let x = 0; x < board[0].length; x++) {
 
-                // prepare matrix with proper translation
-                //const world = uniforms.u_world;
-                //m4.identity(world);
-                //m4.scale(world, [0.5, 0.5, 0.5], world);
-                //m4.translate(world, [-x * 2, 0, -y * 2], world);
-                //m4.transpose(m4.inverse(world, uniforms.u_worldInverseTranspose), uniforms.u_worldInverseTranspose);
-                //m4.multiply(viewProjection, uniforms.u_world, uniforms.u_worldViewProjection);
+    //        if (board[y][x] === 1) {
+
+    //            // render
+
+    //            // prepare matrix with proper translation
+    //            //const world = uniforms.u_world;
+    //            //m4.identity(world);
+    //            //m4.scale(world, [0.5, 0.5, 0.5], world);
+    //            //m4.translate(world, [-x * 2, 0, -y * 2], world);
+    //            //m4.transpose(m4.inverse(world, uniforms.u_worldInverseTranspose), uniforms.u_worldInverseTranspose);
+    //            //m4.multiply(viewProjection, uniforms.u_world, uniforms.u_worldViewProjection);
 
 
-                uniforms.u_time = time;
+    //            //uniforms.u_time = time;
 
-                uniforms.u_matrix = projection;
-                m4.translate(uniforms.u_matrix, [-x * 2, 0, -y * 2], uniforms.u_matrix);
+    //            const world = m4.identity();
+    //            m4.scale(world, [10, 10, 10], world);
+    //            m4.translate(world, [10, 10, 10], world);
+    //            m4.multiply(projection, world, uniforms.u_matrix);
 
-                gl.useProgram(programInfo.program);
-                twgl.setBuffersAndAttributes(gl, programInfo, planeBufferInfo);
-                twgl.setUniforms(programInfo, uniforms);
-                twgl.drawBufferInfo(gl, planeBufferInfo);
+    //            uniforms.u_matrix = projection;
 
-            }
+    //            gl.useProgram(lineProgramInfo.program);
+    //            twgl.setBuffersAndAttributes(gl, lineProgramInfo, planeBufferInfo);
+    //            twgl.setUniforms(lineProgramInfo, uniforms);
+    //            twgl.drawBufferInfo(gl, planeBufferInfo);
 
-        }
+    //        }
 
-    }
+    //    }
+
+    //}
 
     /*
      * 
@@ -196,7 +215,25 @@ function render(time) {
 	twgl.setUniforms(programInfo, uniforms);
     twgl.drawBufferInfo(gl, planeBufferInfo);
 	
+
+
+
+
     */
+
+
+    xlineuniforms.u_matrix = projection;
+    ylineuniforms.u_matrix = projection;
+
+    gl.useProgram(lineProgramInfo.program);
+    twgl.setBuffersAndAttributes(gl, lineProgramInfo, xlinebufferinfo);
+    twgl.setUniforms(lineProgramInfo, xlineuniforms);
+    twgl.drawBufferInfo(gl, xlinebufferinfo, gl.LINES);
+
+    gl.useProgram(lineProgramInfo.program);
+    twgl.setBuffersAndAttributes(gl, lineProgramInfo, zlinebufferinfo);
+    twgl.setUniforms(lineProgramInfo, ylineuniforms);
+    twgl.drawBufferInfo(gl, zlinebufferinfo, gl.LINES);
 
 	requestAnimationFrame(render);
 		
