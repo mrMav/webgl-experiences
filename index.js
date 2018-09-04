@@ -1,62 +1,86 @@
 "use strict";
-	
+
+
+const BOARD_WIDTH = 10;
+const BOARD_HEIGHT = 20;
+const TILE_SIZE = 32;
+const TILE_MARGIN = TILE_SIZE / 8;
+const LINE_THICKNESS = 2;
+const MARGIN_TOP = TILE_SIZE * 2;
+const MARGIN_BOTTOM = TILE_SIZE * 2;
+const MARGIN_RIGHT = TILE_SIZE * 2;
+const MARGIN_LEFT = TILE_SIZE * 2;
+const GAME_SCREEN_WIDTH = BOARD_WIDTH * TILE_SIZE + MARGIN_LEFT + MARGIN_RIGHT;
+const GAME_SCREEN_HEIGHT = BOARD_HEIGHT * TILE_SIZE + MARGIN_TOP + MARGIN_BOTTOM;
+const FONT_SIZE_1 = Math.floor(TILE_SIZE * 0.5 / 5) * 5;
+const FONT_SIZE_2 = Math.floor(TILE_SIZE / 5) * 5;
+const FONT_SIZE_3 = Math.floor(TILE_SIZE * 2 / 5) * 5;
+const SCORE_RECT_WIDTH = FONT_SIZE_2 * 6;
+const SCORE_RECT_HEIGHT = FONT_SIZE_2;
+
 const keyboard = new Keyboard();
-const gl = document.getElementById("c").getContext("webgl");
+const gl = document.getElementById("c").getContext("webgl", { antialias: false });
 const m4 = twgl.m4;
 
-//twgl.setDefaults({ attribPrefix: "a_" });
-
 gl.clearColor(0.0, 0.0, 0.0, 1.0);
-gl.canvas.width  = 640;
-gl.canvas.height = 480;
+gl.canvas.width = GAME_SCREEN_WIDTH;
+gl.canvas.height = GAME_SCREEN_HEIGHT;
 
 // canvas where the letters will be drawn
 const charctx = document.createElement("canvas").getContext("2d");
-charctx.canvas.width  = 16;
-charctx.canvas.height = 16;
+charctx.canvas.width = SCORE_RECT_WIDTH;
+charctx.canvas.height = SCORE_RECT_HEIGHT;
 
-document.getElementsByTagName("body")[0].appendChild(charctx.canvas);
+//document.getElementsByTagName("body")[0].appendChild(charctx.canvas);
 
-function drawCharacter(ctx, char) {
+function drawString(ctx, string) {
 
-    let rectSize = Math.floor(16/5);
+    let rectSize = Math.floor(TILE_SIZE / 5);  // 5 is the maximum number of units length of the characters
+    let str = string.toUpperCase();  // only uppercase stuff
+    let offsetX = 0;
 
-    let c = char.toUpperCase();
+    ctx.save();
+    ctx.fillStyle = "rgba(255, 0, 255, 255)"
+    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-    if (Letters[c]) {
+    ctx.fillStyle = "rgba(255, 255, 255, 255)";
 
-        ctx.save();
-        ctx.fillStyle = "rgba(255, 0, 255, 255)"
-        ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    for (let i = 0; i < str.length; i++) {
 
-        ctx.fillStyle = "rgba(255, 255, 255, 255)"
+        let c = str[i];
 
+        if (Letters[c]) {
 
-        for (let y = 0; y < Letters[c].length; y++) {
+            let charWidth = 0;
+            
+            for (let y = 0; y < Letters[c].length; y++) {
 
-            for (let x = 0; x < Letters[c][y].length; x++) {
+                for (let x = 0; x < Letters[c][y].length; x++) {
 
-                //console.log(`x: ${x}, y: ${y}, value: ${Letters[c][y][x]}`);
+                    if (Letters[c][y][x]) {
 
-                if (Letters[c][y][x] === 1) {
+                        ctx.fillRect(x * rectSize + offsetX, y * rectSize, rectSize, rectSize);
+                        
+                        charWidth = x * rectSize > charWidth ? x * rectSize : charWidth;
+                        //console.log(`Painted char '${c}' at ${x * rectSize}, ${y * rectSize}, offset: ${charWidth}`);
 
-                    ctx.fillRect(x * rectSize, y * rectSize, rectSize, rectSize);
-
-                    //console.log(`Painted at ${x * rectSize}, ${y * rectSize}, ${rectSize}, ${rectSize}`);
+                    }
 
                 }
 
             }
 
+            offsetX += charWidth + rectSize * 2;
+
+        } else {
+
+            console.warn(`char '${c}' does not exist in letters dictionary.`);
+
         }
 
-        ctx.restore();
-
-    } else {
-
-        console.warn(`char '${char}' does not exist in letters dictionary.`);
-
     }
+    
+    ctx.restore();
 
 }
 
@@ -82,8 +106,8 @@ const textures = twgl.createTextures(gl,
             src: [
 
                 // 1                // 2 
-                255, 255, 255, 255, 0, 255, 0, 255,
-                255, 0, 0, 255,     0, 0, 255, 255,
+                255, 255, 255, 255, 255, 0, 0, 255,
+                0, 255, 0, 255, 0, 0, 255, 255,
 
             ]
 
@@ -153,9 +177,6 @@ const myplanearrays = {
 }
 const myplaneBufferInfo = twgl.createBufferInfoFromArrays(gl, myplanearrays);
 
-const primitivePlane = twgl.primitives.createPlaneBufferInfo(gl, 2, 2);
-console.log(primitivePlane.attribs.texcoord[1]);
-
 const uniforms = {
 
     u_worldViewProjection: m4.identity(),
@@ -164,30 +185,85 @@ const uniforms = {
 
     u_diffuse: textures.fromArray,
 
-    u_color: [0.0, 0.9, 0.0, 1.0],
+    u_color: [1.0, 1.0, 1.0, 1.0],
 
     u_time: 0
 };
 
-const planePosition = [0, 0, 0];
+const scoreUniforms = {
 
+    u_worldViewProjection: m4.identity(),
+
+    u_diffuse: textures.fromCanvas
+    
+}
 
 const xlinearrays = {
 
     a_position: [
         0.0, 0.0, 0.0,
-        20.0, 0.0, 0.0
+        GAME_SCREEN_WIDTH, 0.0, 0.0
     ]
 }
 const ylinearrays = {
 
     a_position: [
         0.0, 0.0, 0.0,
-        0.0, 20.0, 0.0
+        0.0, GAME_SCREEN_HEIGHT, 0.0
     ]
 }
 const xlinebufferinfo = twgl.createBufferInfoFromArrays(gl, xlinearrays);
 const zlinebufferinfo = twgl.createBufferInfoFromArrays(gl, ylinearrays);
+
+const puzzleAreaLinesArrays = {
+
+    a_position: [
+
+        MARGIN_LEFT, MARGIN_TOP, 0.0,
+        MARGIN_LEFT, MARGIN_TOP + BOARD_HEIGHT * TILE_SIZE, 0.0,
+
+        MARGIN_LEFT - 1, MARGIN_TOP + BOARD_HEIGHT * TILE_SIZE, 0.0,
+        MARGIN_LEFT + BOARD_WIDTH * TILE_SIZE + 1, MARGIN_TOP + BOARD_HEIGHT * TILE_SIZE, 0.0,
+
+        MARGIN_LEFT + BOARD_WIDTH * TILE_SIZE + 1, MARGIN_TOP + BOARD_HEIGHT * TILE_SIZE, 0.0,
+        MARGIN_LEFT + BOARD_WIDTH * TILE_SIZE + 1, MARGIN_TOP, 0.0
+    ]
+
+}
+const puzzleAreaLinesBufferInfo = twgl.createBufferInfoFromArrays(gl, puzzleAreaLinesArrays);
+const puzzleAreaLinesUniforms = {
+    
+    u_worldViewProjection: m4.identity(),
+
+    u_color: [1.0, 1.0, 1.0, 1.0]
+
+}
+
+const gameAreaLinesArrays = {
+
+    a_position: [
+
+        MARGIN_LEFT / 4, MARGIN_TOP / 4, 0.0,
+        MARGIN_LEFT / 4, GAME_SCREEN_HEIGHT - MARGIN_BOTTOM / 4, 0.0,
+
+        MARGIN_LEFT / 4, GAME_SCREEN_HEIGHT - MARGIN_BOTTOM / 4, 0.0,
+        GAME_SCREEN_WIDTH - MARGIN_RIGHT / 4, GAME_SCREEN_HEIGHT - MARGIN_BOTTOM / 4, 0.0,
+
+        GAME_SCREEN_WIDTH - MARGIN_RIGHT / 4, GAME_SCREEN_HEIGHT - MARGIN_BOTTOM / 4, 0.0,
+        GAME_SCREEN_WIDTH - MARGIN_RIGHT / 4, MARGIN_TOP / 4, 0.0
+
+    ]
+
+}
+const gameAreaLinesBufferInfo = twgl.createBufferInfoFromArrays(gl, gameAreaLinesArrays);
+const gameAreaLinesUniforms = {
+
+    u_worldViewProjection: m4.identity(),
+
+    u_color: [1.0, 1.0, 1.0, 1.0]
+
+}
+
 
 const xlineuniforms = {
 
@@ -206,18 +282,19 @@ const ylineuniforms = {
 const cameraPosition = [-gl.canvas.width / 2, -gl.canvas.height / 2, 0.0];
 
 let lasttime = 0;
-let interval = 1000;
+let interval = 0;
 
+let counter = 0;
 function render(time) {
 
-    //if (lasttime + interval < time) {
+    if (lasttime + interval < time) {
 
-    //    drawCharacter(charctx, String.fromCharCode(rand(48, 90)));
-    //    twgl.setTextureFromElement(gl, textures.fromCanvas, charctx.canvas);
+        drawString(charctx, convertScoreIntToString(++counter, 6));
+        twgl.setTextureFromElement(gl, textures.fromCanvas, charctx.canvas);
 
-    //    lasttime = time;
+        lasttime = time;
 
-    //}
+    }
     time *= 0.001;
     
     if (keyboard.left.isDown) {
@@ -261,46 +338,58 @@ function render(time) {
         for (let x = 0; x < board[0].length; x++) {
 
             if (board[y][x] === 1) {
-
-                const size = 16;
-                const border = 2
-
+                
                 const world = m4.identity();
 
-                m4.translate(world, [x * size + size / 2, y * size + size / 2, 0], world);
-                //m4.rotateZ(world, Math.sin(time), world);
-                m4.scale(world, [size / 2 - border / 2, size / 2 - border / 2, 1], world);
-
+                m4.translate(world, [x * TILE_SIZE + TILE_SIZE / 2 + MARGIN_LEFT, y * TILE_SIZE + TILE_SIZE / 2 + MARGIN_TOP, 0], world);
+                m4.scale(world, [TILE_SIZE / 2 - TILE_MARGIN / 2, TILE_SIZE / 2 - TILE_MARGIN / 2, 1], world);
                 m4.multiply(projection, world, uniforms.u_worldViewProjection);
 
                 uniforms.u_time = time;
 
-                //const shader = lineProgramInfo;  
-                const shader = textureProgramInfo; 
+                const shader = lineProgramInfo;  
+                //const shader = textureProgramInfo;                
+                renderObject(shader, uniforms, myplaneBufferInfo);
 
-                gl.useProgram(shader.program);
-                twgl.setBuffersAndAttributes(gl, shader, myplaneBufferInfo);
-                twgl.setUniforms(shader, uniforms);
-                twgl.drawBufferInfo(gl, myplaneBufferInfo);
-                
             }
 
         }
 
     }
 
-    xlineuniforms.u_worldViewProjection = projection;
-    ylineuniforms.u_worldViewProjection = projection;
+    // render score quad
+    m4.identity(scoreUniforms.u_worldViewProjection);
+    m4.translate(
+        scoreUniforms.u_worldViewProjection,
+        [
+            GAME_SCREEN_WIDTH / 2 + 10,                    // x
+            SCORE_RECT_HEIGHT / 2 + 2,                         // y
+            0                                              // z
+        ],
+        scoreUniforms.u_worldViewProjection);
+    m4.scale(scoreUniforms.u_worldViewProjection, [SCORE_RECT_WIDTH / 2, SCORE_RECT_HEIGHT / 2, 0], scoreUniforms.u_worldViewProjection);
+    m4.multiply(projection, scoreUniforms.u_worldViewProjection, scoreUniforms.u_worldViewProjection);
+    renderObject(textureProgramInfo, scoreUniforms, myplaneBufferInfo);
 
-    gl.useProgram(lineProgramInfo.program);
-    twgl.setBuffersAndAttributes(gl, lineProgramInfo, xlinebufferinfo);
-    twgl.setUniforms(lineProgramInfo, xlineuniforms);
-    twgl.drawBufferInfo(gl, xlinebufferinfo, gl.LINES);
+    // render decorative lines
+    puzzleAreaLinesUniforms.u_worldViewProjection = projection;
+    renderObject(lineProgramInfo, puzzleAreaLinesUniforms, puzzleAreaLinesBufferInfo, gl.LINES);
 
-    gl.useProgram(lineProgramInfo.program);
-    twgl.setBuffersAndAttributes(gl, lineProgramInfo, zlinebufferinfo);
-    twgl.setUniforms(lineProgramInfo, ylineuniforms);
-    twgl.drawBufferInfo(gl, zlinebufferinfo, gl.LINES);
+    gameAreaLinesUniforms.u_worldViewProjection = projection;
+    renderObject(lineProgramInfo, gameAreaLinesUniforms, gameAreaLinesBufferInfo, gl.LINE_LOOP);
+    
+    //xlineuniforms.u_worldViewProjection = projection;
+    //ylineuniforms.u_worldViewProjection = projection;
+
+    //gl.useProgram(lineProgramInfo.program);
+    //twgl.setBuffersAndAttributes(gl, lineProgramInfo, xlinebufferinfo);
+    //twgl.setUniforms(lineProgramInfo, xlineuniforms);
+    //twgl.drawBufferInfo(gl, xlinebufferinfo, gl.LINES);
+
+    //gl.useProgram(lineProgramInfo.program);
+    //twgl.setBuffersAndAttributes(gl, lineProgramInfo, zlinebufferinfo);
+    //twgl.setUniforms(lineProgramInfo, ylineuniforms);
+    //twgl.drawBufferInfo(gl, zlinebufferinfo, gl.LINES);
 
 	requestAnimationFrame(render);
 		
@@ -308,6 +397,23 @@ function render(time) {
 
 requestAnimationFrame(render);	
 
+function convertScoreIntToString(int, size) {
+
+    let s = "000000" + int;
+
+    if (int > 999999) {
+
+        s = "999999";
+
+    }
+
+    return s.substr(s.length - size);
+}
+
+function pad(num, size) {
+    var s = "000000000" + num;
+    return s.substr(s.length - size);
+}
 
 function rand(min, max) {
     if (max === undefined) {
@@ -323,5 +429,20 @@ function strm4(matrix) {
         matrix[4] + ", " + matrix[5] + ", " + matrix[6] + ", " + matrix[7] + "\n" +
         matrix[8] + ", " + matrix[9] + ", " + matrix[10] + ", " + matrix[11] + "\n" +
         matrix[12] + ", " + matrix[13] + ", " + matrix[14] + ", " + matrix[15];
+
+}
+
+function renderObject(shader, uniforms, buffer, method) {
+
+    if (method === "undefined") {
+
+        method = gl.TRIANGLES;
+
+    }
+
+    gl.useProgram(shader.program);
+    twgl.setBuffersAndAttributes(gl, shader, buffer);
+    twgl.setUniforms(shader, uniforms);
+    twgl.drawBufferInfo(gl, buffer, method);
 
 }
