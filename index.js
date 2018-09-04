@@ -243,6 +243,9 @@ const gameAreaLinesArrays = {
 
     a_position: [
 
+        MARGIN_LEFT * 2, MARGIN_TOP / 4, 0.0,
+        MARGIN_LEFT / 4, MARGIN_TOP / 4, 0.0,
+        
         MARGIN_LEFT / 4, MARGIN_TOP / 4, 0.0,
         MARGIN_LEFT / 4, GAME_SCREEN_HEIGHT - MARGIN_BOTTOM / 4, 0.0,
 
@@ -250,7 +253,11 @@ const gameAreaLinesArrays = {
         GAME_SCREEN_WIDTH - MARGIN_RIGHT / 4, GAME_SCREEN_HEIGHT - MARGIN_BOTTOM / 4, 0.0,
 
         GAME_SCREEN_WIDTH - MARGIN_RIGHT / 4, GAME_SCREEN_HEIGHT - MARGIN_BOTTOM / 4, 0.0,
-        GAME_SCREEN_WIDTH - MARGIN_RIGHT / 4, MARGIN_TOP / 4, 0.0
+        GAME_SCREEN_WIDTH - MARGIN_RIGHT / 4, MARGIN_TOP / 4, 0.0,
+
+        GAME_SCREEN_WIDTH - MARGIN_RIGHT / 4, MARGIN_TOP / 4, 0.0,
+        GAME_SCREEN_WIDTH - MARGIN_RIGHT * 2, MARGIN_TOP / 4, 0.0,
+
 
     ]
 
@@ -362,8 +369,8 @@ function render(time) {
     m4.translate(
         scoreUniforms.u_worldViewProjection,
         [
-            GAME_SCREEN_WIDTH / 2 + 10,                    // x
-            SCORE_RECT_HEIGHT / 2 + 2,                         // y
+            GAME_SCREEN_WIDTH / 2 + 18,                    // x
+            SCORE_RECT_HEIGHT / 2 + 2,                     // y
             0                                              // z
         ],
         scoreUniforms.u_worldViewProjection);
@@ -376,7 +383,7 @@ function render(time) {
     renderObject(lineProgramInfo, puzzleAreaLinesUniforms, puzzleAreaLinesBufferInfo, gl.LINES);
 
     gameAreaLinesUniforms.u_worldViewProjection = projection;
-    renderObject(lineProgramInfo, gameAreaLinesUniforms, gameAreaLinesBufferInfo, gl.LINE_LOOP);
+    renderObject(lineProgramInfo, gameAreaLinesUniforms, gameAreaLinesBufferInfo, gl.LINES);
     
     //xlineuniforms.u_worldViewProjection = projection;
     //ylineuniforms.u_worldViewProjection = projection;
