@@ -20,32 +20,14 @@
 
 </head>
 
-<body>
+<body id="body">
 
     <canvas id="c">No support</canvas>
 
     <!-- lib -->
     <script src="twgl-full.min.js"></script>
     <!-- shaders -->
-    <script id="vs" type="notjs">
-
-        uniform mat4 u_worldViewProjection;
-        uniform mat4 u_world;
-        uniform mat4 u_viewInverse;
-        uniform mat4 u_worldInverseTranspose;
-
-        attribute vec4 a_position;
-        attribute vec4 a_normal;
-        attribute vec4 a_texcoord;
-
-        void main() {
-
-        gl_Position = u_worldViewProjection * a_position;
-
-        }
-
-    </script>
-    <script id="vs_line" type="notjs">
+    <script id="color_vs" type="notjs">
 
         uniform mat4 u_worldViewProjection;
 
@@ -60,35 +42,19 @@
         }
 
     </script>
-    <script id="fs" type="notjs">
-
-        precision mediump float;
-
-        uniform float u_time;
-
-        void main() {
-
-        //vec2 uv = gl_FragCoord.xy / resolution;
-
-        gl_FragColor = vec4((cos(u_time) + 1.0) / 2.0, (sin(u_time) + 1.0) / 2.0, (sin(-u_time) + 1.0) / 2.0, 1.0);
-
-        }
-
-    </script>
-    <script id="fs_line" type="notjs">
+    <script id="color_fs" type="notjs">
 
         precision mediump float;
 
         uniform vec4 u_color;
 
         void main() {
-        
+
         gl_FragColor = u_color;
 
         }
 
     </script>
-
     <script id="tex_mat_vs" type="notjs">
 
         uniform mat4 u_worldViewProjection;
@@ -123,8 +89,8 @@
         vec4 color = vec4(texture2D(u_diffuse, v_texcoord));
 
         if(color == vec4(1.0, 0.0, 1.0, 1.0)) {
-        
-            discard;
+
+        discard;
 
         }
 
@@ -134,13 +100,20 @@
 
 
     </script>
-
-
     <!-- app -->
-    <script src="Letters.js"></script>
     <script src="Key.js"></script>
     <script src="Keyboard.js"></script>
-    <script src="index.js"></script>
+    <script src="Game.js"></script>
+    <script src="Chars.js"></script>
+    <script src="Meshes.js"></script>
+    <script src="Models.js"></script>
+    <script src="Shaders.js"></script>
+    <script src="Text.js"></script>
+    <script src="Textures.js"></script>
+    <script src="Utils.js"></script>
+    <script src="Loop.js"></script>
+    <script src="Init.js"></script>
+    <script src="Boot.js"></script>
 
 </body>
 

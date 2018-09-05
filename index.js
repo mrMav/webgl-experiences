@@ -1,89 +1,5 @@
 "use strict";
 
-
-const BOARD_WIDTH = 10;
-const BOARD_HEIGHT = 20;
-const TILE_SIZE = 32;
-const TILE_MARGIN = TILE_SIZE / 8;
-const LINE_THICKNESS = 2;
-const MARGIN_TOP = TILE_SIZE * 2;
-const MARGIN_BOTTOM = TILE_SIZE * 2;
-const MARGIN_RIGHT = TILE_SIZE * 2;
-const MARGIN_LEFT = TILE_SIZE * 2;
-const GAME_SCREEN_WIDTH = BOARD_WIDTH * TILE_SIZE + MARGIN_LEFT + MARGIN_RIGHT;
-const GAME_SCREEN_HEIGHT = BOARD_HEIGHT * TILE_SIZE + MARGIN_TOP + MARGIN_BOTTOM;
-const FONT_SIZE_1 = Math.floor(TILE_SIZE * 0.5 / 5) * 5;
-const FONT_SIZE_2 = Math.floor(TILE_SIZE / 5) * 5;
-const FONT_SIZE_3 = Math.floor(TILE_SIZE * 2 / 5) * 5;
-const SCORE_RECT_WIDTH = FONT_SIZE_2 * 6;
-const SCORE_RECT_HEIGHT = FONT_SIZE_2;
-
-const keyboard = new Keyboard();
-const gl = document.getElementById("c").getContext("webgl", { antialias: false });
-const m4 = twgl.m4;
-
-gl.clearColor(0.0, 0.0, 0.0, 1.0);
-gl.canvas.width = GAME_SCREEN_WIDTH;
-gl.canvas.height = GAME_SCREEN_HEIGHT;
-
-// canvas where the letters will be drawn
-const charctx = document.createElement("canvas").getContext("2d");
-charctx.canvas.width = SCORE_RECT_WIDTH;
-charctx.canvas.height = SCORE_RECT_HEIGHT;
-
-//document.getElementsByTagName("body")[0].appendChild(charctx.canvas);
-
-function drawString(ctx, string) {
-
-    let rectSize = Math.floor(TILE_SIZE / 5);  // 5 is the maximum number of units length of the characters
-    let str = string.toUpperCase();  // only uppercase stuff
-    let offsetX = 0;
-
-    ctx.save();
-    ctx.fillStyle = "rgba(255, 0, 255, 255)"
-    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-
-    ctx.fillStyle = "rgba(255, 255, 255, 255)";
-
-    for (let i = 0; i < str.length; i++) {
-
-        let c = str[i];
-
-        if (Letters[c]) {
-
-            let charWidth = 0;
-            
-            for (let y = 0; y < Letters[c].length; y++) {
-
-                for (let x = 0; x < Letters[c][y].length; x++) {
-
-                    if (Letters[c][y][x]) {
-
-                        ctx.fillRect(x * rectSize + offsetX, y * rectSize, rectSize, rectSize);
-                        
-                        charWidth = x * rectSize > charWidth ? x * rectSize : charWidth;
-                        //console.log(`Painted char '${c}' at ${x * rectSize}, ${y * rectSize}, offset: ${charWidth}`);
-
-                    }
-
-                }
-
-            }
-
-            offsetX += charWidth + rectSize * 2;
-
-        } else {
-
-            console.warn(`char '${c}' does not exist in letters dictionary.`);
-
-        }
-
-    }
-    
-    ctx.restore();
-
-}
-
 const textures = twgl.createTextures(gl,
 
     {
@@ -117,34 +33,36 @@ const textures = twgl.createTextures(gl,
 
 );
 
-
 const programInfo = twgl.createProgramInfo(gl, ["vs", "fs"]);
 const lineProgramInfo = twgl.createProgramInfo(gl, ["vs_line", "fs_line"]);
 const textureProgramInfo = twgl.createProgramInfo(gl, ["tex_mat_vs", "tex_mat_fs"]);
 
 const board = [
 
-    [1, 0, 0, 0, 1, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 1, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 1, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 1, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 1, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 1, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 1, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 1, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 1, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 1, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 1, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 1, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 1, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 1, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 1, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 1, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 1, 1, 0, 0, 0, 1],
-    [1, 0, 0, 0, 1, 1, 0, 1, 0, 1],
-    [1, 0, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
+    [0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0],
+    [0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0],
+    [0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1],
+    [1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1, 1]
 
 ];
 
@@ -296,6 +214,8 @@ function render(time) {
 
     if (lasttime + interval < time) {
 
+
+
         drawString(charctx, convertScoreIntToString(++counter, 6));
         twgl.setTextureFromElement(gl, textures.fromCanvas, charctx.canvas);
 
@@ -369,7 +289,7 @@ function render(time) {
     m4.translate(
         scoreUniforms.u_worldViewProjection,
         [
-            GAME_SCREEN_WIDTH / 2 + 18,                    // x
+            GAME_SCREEN_WIDTH / 2 + TILE_SIZE * 0.5,                    // x
             SCORE_RECT_HEIGHT / 2 + 2,                     // y
             0                                              // z
         ],
