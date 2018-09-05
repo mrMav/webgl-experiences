@@ -385,13 +385,14 @@
 
         if (evt.type = "tap") {
 
-            let middleDeadZone = 4 * game.TILE_SIZE;
+            let canvasRect = game.gl.canvas.getBoundingClientRect();
+            let middleDeadZone = canvasRect.width / 4;
 
-            if (evt.center.x < this.GAME_SCREEN_WIDTH / 2 - middleDeadZone / 2) {
+            if (evt.center.x < canvasRect.x + canvasRect.width / 2 - middleDeadZone / 2) {
                 // left side
                 this.handleLeftMoveEvent();
 
-            } else if (evt.center.x > this.GAME_SCREEN_WIDTH / 2 + middleDeadZone / 2) {
+            } else if (evt.center.x > canvasRect.x + canvasRect.width / 2 + middleDeadZone / 2) {
                 // right side
                 this.handleRightMoveEvent();
 
@@ -414,10 +415,30 @@
     game.hammer.on("swipedown", function (evt) {
 
         game.handleThrowDownEvent();
-
-        console.log(evt);
-
+        
     });
 
+    /*
+     * resize the canvas by scaling
+     * ans maintain aspect
+     * see: http://codetheory.in/scaling-your-html5-canvas-to-fit-different-viewports-or-resolutions/
+     */ 
+    game.resize = function () {
+
+        // Our canvas must cover full height of screen
+        // regardless of the resolution
+        var height = window.innerHeight;
+
+        // So we need to calculate the proper scaled width
+        // that should work well with every resolution
+        var ratio = game.gl.canvas.width / game.gl.canvas.height;
+        var width = height * ratio;
+
+        game.gl.canvas.style.width = width + 'px';
+        game.gl.canvas.style.height = height + 'px';
+
+    }
+
+    window.addEventListener("resize", game.resize);
         
 }());
