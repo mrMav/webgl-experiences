@@ -25,6 +25,8 @@
         this.gl.canvas.width = this.GAME_SCREEN_WIDTH;
         this.gl.canvas.height = this.GAME_SCREEN_HEIGHT;
 
+        this.resize();
+
         // make the top left coordinates 0,0
         this.cameraPosition = [-this.gl.canvas.width / 2, -this.gl.canvas.height / 2, 0.0];
         
