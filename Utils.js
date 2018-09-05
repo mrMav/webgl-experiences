@@ -33,4 +33,23 @@
         return min + Math.random() * (max - min);
     }
 
+    game.utils.sortNumber = function (a, b) {
+
+        return a - b;
+
+    }
+
+    game.utils.randomInt = function (min, max) {
+
+        return Math.floor(Math.random() * (max - min + 1) + min);
+
+    }
+
+    game.utils.checkArrayElementExists = function (array, element) {
+
+        return (array.indexOf(element)) != -1;
+
+    }
+
+
 }());

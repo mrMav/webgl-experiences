@@ -24,8 +24,29 @@
         this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
         this.gl.canvas.width = this.GAME_SCREEN_WIDTH;
         this.gl.canvas.height = this.GAME_SCREEN_HEIGHT;
-        
+
+        // make the top left coordinates 0,0
         this.cameraPosition = [-this.gl.canvas.width / 2, -this.gl.canvas.height / 2, 0.0];
+        
+        //generate a board
+        for (let i = 0; i < this.BOARD_HEIGHT; i++) {
+
+            let r = [];
+
+            for (let j = 0; j < this.BOARD_WIDTH; j++) {
+
+                r.push(0);
+
+            }
+
+            this.board.push(r);
+
+        }
+
+        // create a first shape
+        this.nextShape = new game.shape("SHAPE_" + this.utils.randomInt(1, 7));
+        this.spawnShape();  
+
 
         /*
          * Create shaders

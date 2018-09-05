@@ -28,6 +28,9 @@
 
         }
 
+        // render current falling shape
+        this.currentShape.render(projection);
+
         // for each board position, render a quad
         // only if the value is 1
         for (let y = 0; y < this.board.length; y++) {
@@ -76,6 +79,11 @@
 
         this.models.render(this.models["modelPuzzleAreaLines"]);
         this.models.render(this.models["modelGameAreaLines"]);
+
+        // update the logic. Yap, with the render loop.
+        // this is a puzzle game man...
+        this.update(time);
+
 
         requestAnimationFrame(game.loop.bind(this));
 
