@@ -216,7 +216,7 @@
                 this.board.splice(i, 1);
 
                 // add another one to the top
-                let newLine = new Array(this.boardWidth + 1).join('0').split('').map(parseFloat);
+                let newLine = new Array(this.BOARD_WIDTH + 1).join('0').split('').map(parseFloat);
 
                 this.board.splice(0, 0, newLine);
 
@@ -250,5 +250,102 @@
         }
 
     }
+
+    game.handleRightKeyUpEvent = function () {
+
+        if (!game.utils.checkArrayElementExists(game.checkAdjacent(), "right")) {
+
+            if (this.currentShape.position.x + 4 - this.currentShape.marginRight < game.BOARD_WIDTH) {  // 4 is the number of the shape width
+
+                this.currentShape.moveRight();
+
+            }
+
+        }
+
+    }
+
+    game.handleLeftKeyUpEvent = function () {
+
+        if (!game.utils.checkArrayElementExists(game.checkAdjacent(), "left")) {
+
+            if (this.currentShape.position.x + this.currentShape.marginLeft > 0) {
+
+                this.currentShape.moveLeft();
+
+            }
+
+        }
+
+    }
+
+    game.handleDownKeyUpEvent = function () {
+
+        if (!game.utils.checkArrayElementExists(game.checkAdjacent(), "bottom")) {
+
+            this.currentShape.moveDown();
+
+            this.score++;
+
+            game.lastFrame = performance.now();  // should be its own variable, like lastDownInput eg.
+
+        }
+
+    }
+
+    game.handleSpaceKeyUpEvent = function () {
+
+        let nextRotation = this.currentShape.rotation + 1 > 3 ? 0 : this.currentShape.rotation + 1;
+
+        this.currentShape.rotation = nextRotation;
+        this.currentShape.calculateMargins();
+
+        // if out of borders, snap it
+        if (this.currentShape.position.x + this.currentShape.marginLeft < 0) {
+
+            this.currentShape.position.x = -this.currentShape.marginLeft;
+
+        }
+        if (this.currentShape.position.x + 4 - this.currentShape.marginRight > game.BOARD_WIDTH) {
+
+            this.currentShape.position.x = game.BOARD_WIDTH - 4 + this.currentShape.marginRight;
+
+        }
+
+        if (this.checkOverlap()) {
+
+            // roll back rotation
+            this.currentShape.rotation = this.currentShape.rotation - 1 < 0 ? 3 : this.currentShape.rotation - 1;
+
+        }
+
+    }
+
+    game.handleKeysUp = function (keycode) {
+
+        if (keycode === 37) {
+            // left
+
+            this.handleLeftKeyUpEvent();
+
+        } else if (keycode === 39) {
+            // right
+
+            this.handleRightKeyUpEvent();
+
+        } else if (keycode === 40) {
+            // down
+
+            this.handleDownKeyUpEvent();
+
+        } else if (keycode === 32) {
+            //spacebar
+
+            this.handleSpaceKeyUpEvent();
+
+        }
+
+    };
+
         
 }());
