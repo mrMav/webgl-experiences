@@ -21,6 +21,8 @@
 
         this.calculateMargins();
 
+        this.position.y = -this.marginUp;
+
     }
 
     game.shape.prototype.render = function (projection) {

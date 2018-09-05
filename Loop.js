@@ -23,7 +23,7 @@
         // update the score text
         if (this.lasttime + this.interval < time) {
 
-            this.text.updateTextureText("score", this.utils.convertScoreIntToString(++this.counter, 6))
+            this.text.updateTextureText("score", this.utils.convertScoreIntToString(this.score, 6))
             this.lasttime = time;
 
         }

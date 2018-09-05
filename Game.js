@@ -16,7 +16,7 @@
 
     game.BOARD_WIDTH = 12;
     game.BOARD_HEIGHT = 24;
-    game.TILE_SIZE = 16;
+    game.TILE_SIZE = 32;
     game.TILE_MARGIN = game.TILE_SIZE / 8;
     game.LINE_THICKNESS = 2;
     game.MARGIN_TOP = game.TILE_SIZE * 2;
@@ -47,6 +47,12 @@
     game.spawnNewShape = false;
     game.score = 0;
     game.endGame = false;
+
+    // input by hammer
+    // see in the bottom the implementation of the handler functions
+    game.hammer = new Hammer.Manager(document.getElementById("c"));
+    game.hammer.add(new Hammer.Tap({ event: "tap", tap: 1 }));
+    game.hammer.add(new Hammer.Swipe({ event: "swipedown", direction: Hammer.DIRECTION_DOWN }));
 
     /*
      * Methods for gameplay
@@ -101,7 +107,7 @@
 
                     this.spawnShape();
 
-                    return;
+                    //return;
 
                 }
 
@@ -251,7 +257,7 @@
 
     }
 
-    game.handleRightKeyUpEvent = function () {
+    game.handleRightMoveEvent = function () {
 
         if (!game.utils.checkArrayElementExists(game.checkAdjacent(), "right")) {
 
@@ -265,7 +271,7 @@
 
     }
 
-    game.handleLeftKeyUpEvent = function () {
+    game.handleLeftMoveEvent = function () {
 
         if (!game.utils.checkArrayElementExists(game.checkAdjacent(), "left")) {
 
@@ -279,7 +285,7 @@
 
     }
 
-    game.handleDownKeyUpEvent = function () {
+    game.handleDownMoveEvent = function () {
 
         if (!game.utils.checkArrayElementExists(game.checkAdjacent(), "bottom")) {
 
@@ -293,7 +299,29 @@
 
     }
 
-    game.handleSpaceKeyUpEvent = function () {
+    game.handleThrowDownEvent = function () {
+
+        while (true) {
+
+            if (!game.utils.checkArrayElementExists(game.checkAdjacent(), "bottom")) {
+
+                this.currentShape.moveDown();
+
+                this.score++;
+
+                game.lastFrame = performance.now();  // should be its own variable, like lastDownInput eg.
+
+            } else {
+
+                break;
+
+            }
+
+        }
+
+    }
+
+    game.handleRotateEvent = function () {
 
         let nextRotation = this.currentShape.rotation + 1 > 3 ? 0 : this.currentShape.rotation + 1;
 
@@ -321,31 +349,75 @@
 
     }
 
+    /*
+     * This is the input function for a keyboard play
+     */ 
     game.handleKeysUp = function (keycode) {
 
         if (keycode === 37) {
             // left
 
-            this.handleLeftKeyUpEvent();
+            this.handleLeftMoveEvent();
 
         } else if (keycode === 39) {
             // right
 
-            this.handleRightKeyUpEvent();
+            this.handleRightMoveEvent();
 
         } else if (keycode === 40) {
             // down
 
-            this.handleDownKeyUpEvent();
+            this.handleDownMoveEvent();
 
         } else if (keycode === 32) {
             //spacebar
 
-            this.handleSpaceKeyUpEvent();
+            this.handleRotateEvent();
 
         }
 
     };
+
+    /*
+     * This is the input function handler for touch or mouse controls
+     */
+    game.handleTouchEvents = function (evt) {
+
+        if (evt.type = "tap") {
+
+            let middleDeadZone = 4 * game.TILE_SIZE;
+
+            if (evt.center.x < this.GAME_SCREEN_WIDTH / 2 - middleDeadZone / 2) {
+                // left side
+                this.handleLeftMoveEvent();
+
+            } else if (evt.center.x > this.GAME_SCREEN_WIDTH / 2 + middleDeadZone / 2) {
+                // right side
+                this.handleRightMoveEvent();
+
+            } else {
+                // middle dead zone
+                this.handleRotateEvent();
+
+            }
+
+        }
+
+    }
+
+    game.hammer.on("tap", function (evt) {
+
+        game.handleTouchEvents(evt);
+        
+    });
+
+    game.hammer.on("swipedown", function (evt) {
+
+        game.handleThrowDownEvent();
+
+        console.log(evt);
+
+    });
 
         
 }());
