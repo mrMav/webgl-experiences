@@ -1,0 +1,7 @@
+{
+  "short_name": "PuzzleGame",
+  "name": "Puzzle Game",
+  "start_url": "index.html",
+  "display": "fullscreen",
+  "orientation": "portrait"
+}
