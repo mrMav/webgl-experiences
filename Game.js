@@ -57,6 +57,8 @@
     game.hammer = new Hammer.Manager(document.getElementById("c"));
     game.hammer.add(new Hammer.Tap({ event: "tap", tap: 1 }));
     game.hammer.add(new Hammer.Swipe({ event: "swipedown", direction: Hammer.DIRECTION_DOWN }));
+    game.hammer.add(new Hammer.Swipe({ event: "swipeleft", direction: Hammer.DIRECTION_LEFT }));
+    game.hammer.add(new Hammer.Swipe({ event: "swiperight", direction: Hammer.DIRECTION_RIGHT }));
 
     /*
      * Methods for gameplay
@@ -437,6 +439,18 @@
 
         game.handleThrowDownEvent();
         
+    });
+
+    game.hammer.on("swipeleft", function (evt) {
+
+        game.handleLeftMoveEvent();
+
+    });
+
+    game.hammer.on("swiperight", function (evt) {
+
+        game.handleRightMoveEvent();
+
     });
 
     /*
