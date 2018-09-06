@@ -19,7 +19,7 @@
     game.TILE_SIZE = 32;
     game.TILE_MARGIN = game.TILE_SIZE / 8;
     game.LINE_THICKNESS = 2;
-    game.MARGIN_TOP = game.TILE_SIZE * 2;
+    game.MARGIN_TOP = game.TILE_SIZE * 4;
     game.MARGIN_BOTTOM = game.TILE_SIZE * 2;
     game.MARGIN_RIGHT = game.TILE_SIZE * 2;
     game.MARGIN_LEFT = game.TILE_SIZE * 2;
@@ -30,6 +30,9 @@
     game.FONT_SIZE_3 = Math.floor(game.TILE_SIZE * 2 / 5) * 5;
     game.SCORE_RECT_WIDTH = game.FONT_SIZE_2 * 6;
     game.SCORE_RECT_HEIGHT = game.FONT_SIZE_2;
+
+    game.MAXIMUM_DROP_INTERVAL = 1000;
+    game.MINIMUM_DROP_INTERVAL = 50;
 
     /*
      * Properties for gameplay
@@ -43,9 +46,10 @@
     game.currentShape = null;
     game.nextShape = null;
     game.lastFrame = 0;
-    game.interval = 1000;
+    game.interval = game.MAXIMUM_DROP_INTERVAL;
     game.spawnNewShape = false;
     game.score = 0;
+    game.ellapsedtime = 0;
     game.endGame = false;
 
     // input by hammer
@@ -57,6 +61,17 @@
     /*
      * Methods for gameplay
      */
+
+    game.calculateInterval = function () {
+        /*
+         * Exponencial interval calculation
+         * based on the maximum possible
+         */
+
+        return 50 * Math.pow(2, 10 * (game.score / 999998)) + game.MAXIMUM_DROP_INTERVAL;
+
+
+    }
     
     game.spawnShape = function (type) {
 
@@ -232,7 +247,9 @@
 
         totalScore = completeLines * 100;
         this.score += totalScore;
-        this.interval -= this.interval <= 100 ? 0 : completeLines * 50;
+        this.interval -= this.interval <= game.MINIMUM_DROP_INTERVAL ? 0 : completeLines * 20;
+
+        //console.log(game.calculateInterval())
 
     }
 
@@ -359,6 +376,10 @@
 
             this.handleLeftMoveEvent();
 
+        } else if (keycode === 38) {
+
+            this.handleThrowDownEvent();
+
         } else if (keycode === 39) {
             // right
 
@@ -433,6 +454,14 @@
         // that should work well with every resolution
         var ratio = game.gl.canvas.width / game.gl.canvas.height;
         var width = height * ratio;
+
+        if (width > window.innerWidth) {
+
+            width = window.innerWidth;
+            height = width * (game.gl.canvas.height / game.gl.canvas.width);
+
+        }
+
 
         game.gl.canvas.style.width = width + 'px';
         game.gl.canvas.style.height = height + 'px';

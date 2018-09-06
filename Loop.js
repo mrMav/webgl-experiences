@@ -10,7 +10,9 @@
     const game = window.game;
 
     game.loop = function (time) {
-        
+
+        game.ellapsedtime = time;
+
         // update and clear viewport
         this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
         this.gl.clear(this.gl.COLOR_BUFFER_BIT);
@@ -21,12 +23,10 @@
         this.m4.translate(projection, this.cameraPosition, projection);
 
         // update the score text
-        if (this.lasttime + this.interval < time) {
-
-            this.text.updateTextureText("score", this.utils.convertScoreIntToString(this.score, 6))
-            this.lasttime = time;
-
-        }
+        this.text.foreground = "#ffffff";
+        this.text.updateTextureText("score", this.utils.convertScoreIntToString(this.score, 6))
+        this.text.foreground = "#777777";
+        this.text.updateTextureText("timer", this.utils.convertScoreIntToString(Math.floor(this.ellapsedtime * 0.001), 6))
 
         // render current falling shape
         this.currentShape.render(projection);
@@ -64,7 +64,7 @@
             scoreModel.uniforms.u_worldViewProjection,
             [
                 this.GAME_SCREEN_WIDTH / 2 + this.TILE_SIZE * 0.5,                    
-                this.SCORE_RECT_HEIGHT / 2 + 2,                     
+                this.MARGIN_TOP / 4,                     
                 0                                                   
             ],
             scoreModel.uniforms.u_worldViewProjection);
@@ -72,6 +72,23 @@
         this.m4.multiply(projection, scoreModel.uniforms.u_worldViewProjection, scoreModel.uniforms.u_worldViewProjection);
 
         this.models.render(scoreModel);
+
+        // render timer quad
+        const timerModel = this.models["modelTimer"];
+
+        this.m4.identity(timerModel.uniforms.u_worldViewProjection);
+        this.m4.translate(
+            timerModel.uniforms.u_worldViewProjection,
+            [
+                this.GAME_SCREEN_WIDTH / 2 + this.TILE_SIZE * 0.5,
+                this.MARGIN_TOP / 4 + this.SCORE_RECT_HEIGHT + 2,
+                0
+            ],
+            timerModel.uniforms.u_worldViewProjection);
+        this.m4.scale(timerModel.uniforms.u_worldViewProjection, [this.SCORE_RECT_WIDTH / 2, this.SCORE_RECT_HEIGHT / 2, 0], timerModel.uniforms.u_worldViewProjection);
+        this.m4.multiply(projection, timerModel.uniforms.u_worldViewProjection, timerModel.uniforms.u_worldViewProjection);
+
+        this.models.render(timerModel);
 
         // render decorative lines
         this.models["modelPuzzleAreaLines"].uniforms.u_worldViewProjection = projection;

@@ -81,6 +81,8 @@
         );
 
         this.text.createTextTexture(this.SCORE_RECT_WIDTH, this.SCORE_RECT_HEIGHT, "000000", "score", { minMag: this.gl.NEAREST });
+        this.text.foreground = "rgba(165, 165, 165, 255)";
+        this.text.createTextTexture(this.SCORE_RECT_WIDTH, this.SCORE_RECT_HEIGHT, "000000", "timer", { minMag: this.gl.NEAREST });
 
 
         /*
@@ -203,6 +205,28 @@
                 u_worldViewProjection: this.m4.identity(),
 
                 u_diffuse: this.textures["score"],
+
+                u_color: [1.0, 1.0, 1.0, 1.0],
+
+                u_time: 0
+            },
+
+            "texture_shader",
+
+            this.gl.TRIANGLES
+
+        );
+
+        this.models.createObject(   // name, meshId, uniformArray, shaderId, renderMode
+
+            "modelTimer",
+
+            "meshQuad",
+
+            {
+                u_worldViewProjection: this.m4.identity(),
+
+                u_diffuse: this.textures["timer"],
 
                 u_color: [1.0, 1.0, 1.0, 1.0],
 
