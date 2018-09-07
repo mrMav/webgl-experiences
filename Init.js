@@ -24,12 +24,19 @@
         this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
         this.gl.canvas.width = this.GAME_SCREEN_WIDTH;
         this.gl.canvas.height = this.GAME_SCREEN_HEIGHT;
+        
+        // make the top left coordinates 0, 0
+        this.cameraPosition = [-this.gl.canvas.width / 2, -this.gl.canvas.height / 2, 0.0];
+
+        // calculate the projection matrix
+        // perform a first resize and set viewports dimensions
+        this.projection = this.m4.identity();        
+        this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
+        this.projection = this.m4.ortho(-this.gl.canvas.width / 2, this.gl.canvas.width / 2, this.gl.canvas.height / 2, -this.gl.canvas.height / 2, -1, 1);
+        this.m4.translate(this.projection, this.cameraPosition, this.projection);
 
         this.resize();
 
-        // make the top left coordinates 0,0
-        this.cameraPosition = [-this.gl.canvas.width / 2, -this.gl.canvas.height / 2, 0.0];
-        
         //generate a board
         for (let i = 0; i < this.BOARD_HEIGHT; i++) {
 
@@ -80,10 +87,10 @@
 
         );
 
+        this.text.createTextTexture(this.GAME_SCREEN_WIDTH / 3, this.FONT_SIZE_3 + 4, ".PLAY.", "playtext", { minMag: this.gl.NEAREST});
         this.text.createTextTexture(this.SCORE_RECT_WIDTH, this.SCORE_RECT_HEIGHT, "000000", "score", { minMag: this.gl.NEAREST });
         this.text.foreground = "rgba(165, 165, 165, 255)";
         this.text.createTextTexture(this.SCORE_RECT_WIDTH, this.SCORE_RECT_HEIGHT, "000000", "timer", { minMag: this.gl.NEAREST });
-
 
         /*
          * Create meshes
@@ -173,9 +180,11 @@
         /*
          * Create models to render
          */
-        this.models.createObject(   // name, meshId, uniformArray, shaderId, renderMode
+        this.models.createObject(   // name, x, y, w, h, meshId, uniformArray, shaderId, renderMode
 
             "modelQuad",
+
+            0, 0, 1, 1,
 
             "meshQuad",
 
@@ -195,16 +204,24 @@
 
         );
 
-        this.models.createObject(   // name, meshId, uniformArray, shaderId, renderMode
+        this.models.createObject(  // name, x, y, w, h, meshId, uniformArray, shaderId, renderMode
 
             "modelScore",
 
+            this.GAME_SCREEN_WIDTH / 2,
+
+            this.MARGIN_TOP / 4,
+
+            this.SCORE_RECT_WIDTH / 2,
+            
+            this.SCORE_RECT_HEIGHT / 2,
+
             "meshQuad",
 
             {
                 u_worldViewProjection: this.m4.identity(),
 
-                u_diffuse: this.textures["score"],
+                u_diffuse: this.textures["score"].webglTexture,
 
                 u_color: [1.0, 1.0, 1.0, 1.0],
 
@@ -217,16 +234,24 @@
 
         );
 
-        this.models.createObject(   // name, meshId, uniformArray, shaderId, renderMode
+        this.models.createObject(   
 
             "modelTimer",
+            
+            this.GAME_SCREEN_WIDTH / 2,
 
+            this.MARGIN_TOP / 4 + this.SCORE_RECT_HEIGHT + 2,
+
+            this.SCORE_RECT_WIDTH / 2,
+
+            this.SCORE_RECT_HEIGHT / 2,            
+            
             "meshQuad",
 
             {
                 u_worldViewProjection: this.m4.identity(),
 
-                u_diffuse: this.textures["timer"],
+                u_diffuse: this.textures["timer"].webglTexture,
 
                 u_color: [1.0, 1.0, 1.0, 1.0],
 
@@ -241,7 +266,39 @@
 
         this.models.createObject(   // name, meshId, uniformArray, shaderId, renderMode
 
+            "modelButtonPlay",
+
+            this.GAME_SCREEN_WIDTH / 2 + this.TILE_SIZE * 0.5,
+
+            this.MARGIN_TOP * 4,
+
+            this.GAME_SCREEN_WIDTH / 3,
+
+            this.FONT_SIZE_3 + 4,
+
+            "meshQuad",
+
+            {
+                u_worldViewProjection: this.m4.identity(),
+
+                u_diffuse: this.textures["playtext"].webglTexture,
+
+                u_color: [1.0, 1.0, 1.0, 1.0],
+
+                u_time: 0
+            },
+
+            "texture_shader",
+
+            this.gl.TRIANGLES
+
+        );
+
+        this.models.createObject(   
+
             "modelPuzzleAreaLines",
+
+            0, 0, this.GAME_SCREEN_WIDTH, this.GAME_SCREEN_HEIGHT,
 
             "meshPuzzleAreaLines",
 
@@ -259,9 +316,11 @@
 
         );
 
-        this.models.createObject(   // name, meshId, uniformArray, shaderId, renderMode
+        this.models.createObject(   
 
             "modelGameAreaLines",
+
+            0, 0, this.GAME_SCREEN_WIDTH, this.GAME_SCREEN_HEIGHT,
 
             "meshGameAreaLines",
 
@@ -279,6 +338,20 @@
 
         );
 
+        /*
+         * create buttons
+         */
+
+        this.buttons.createButton(   //name, x, y, w, h, model, callback
+
+            "playButton",
+            
+            this.models["modelButtonPlay"],
+
+            function () { console.log("play button pressed") }
+
+
+        );
 
     }
 

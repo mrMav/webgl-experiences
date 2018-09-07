@@ -23,6 +23,9 @@
 
     game.text.foreground = "rgba(255, 255, 255, 255)";
     game.text.background = "rgba(0, 0, 0, 255)";
+    game.text.alignHorizontal = "center";
+    game.text.alignVertical = "center";
+    game.text.rectSize = Math.floor(game.TILE_SIZE / 5);
         
     game.text.createTextTexture = function (width, height, string, id, options) {
 
@@ -33,13 +36,22 @@
 
         }
 
-        this._resizeCanvas(width, height);
-        this._drawText(string);
+        let ctx = document.createElement("canvas").getContext("2d");
+        
+        this._resizeCanvas(ctx.canvas, width, height);
+        this._drawText(ctx, string);
 
         options = options || {};
-        options.src = this.ctx.canvas;
+        options.src = ctx.canvas;
 
-        game.textures[id] = twgl.createTexture(game.gl, options);
+        let texture = {
+
+            ctx: ctx,
+            webglTexture: twgl.createTexture(game.gl, options)
+
+        };
+
+        game.textures[id] = texture;
 
     };
 
@@ -52,31 +64,50 @@
 
         }
 
-        this._drawText(string);
+        this._drawText(game.textures[id].ctx, string);
 
-        twgl.setTextureFromElement(game.gl, game.textures[id], this.ctx.canvas);
+        twgl.setTextureFromElement(game.gl, game.textures[id].webglTexture, game.textures[id].ctx.canvas);
 
     };
 
-    game.text._resizeCanvas = function (width, height) {
-
-        this.ctx.canvas.width = width;
-        this.ctx.canvas.height = height;
+    game.text._resizeCanvas = function (canvas, width, height) {
+        
+        canvas.width = width;
+        canvas.height = height;
 
     }
 
-    game.text._drawText = function (string) {
+    game.text._drawText = function (ctx, string) {
 
-        let rectSize = Math.floor(game.TILE_SIZE / 5);  // 5 is the maximum number of units length of the characters
         let str = string.toUpperCase();                 // only uppercase stuff
+
+        let centerX = 0;
+        let centerY = 0;
+        let offsetY = 0;
         let offsetX = 0;
+        let totalTextWidth = this._calculateTextWidth(string);
+        let totalTextHeight = this.rectSize * 5;
 
-        this.ctx.save();
+        if (this.alignHorizontal === "center") {
 
-        this.ctx.fillStyle = this.background;
-        this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+            centerX = ctx.canvas.width / 2;
+            offsetX = centerX - totalTextWidth  / 2;
 
-        this.ctx.fillStyle = this.foreground;
+        }
+
+        if (this.alignVertical === "center") {
+
+            centerY = ctx.canvas.height / 2;
+            offsetY = centerY - totalTextHeight / 2;
+
+        }
+               
+        ctx.save();
+
+        ctx.fillStyle = this.background;
+        ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+        ctx.fillStyle = this.foreground;
 
         for (let i = 0; i < str.length; i++) {
 
@@ -92,10 +123,10 @@
 
                         if (this.chars[c][y][x]) {
 
-                            this.ctx.fillRect(x * rectSize + offsetX, y * rectSize, rectSize, rectSize);
+                            ctx.fillRect(x * this.rectSize + offsetX, y * this.rectSize + offsetY, this.rectSize, this.rectSize);
 
-                            charWidth = x * rectSize > charWidth ? x * rectSize : charWidth;
-                            //console.log(`Painted char '${c}' at ${x * rectSize}, ${y * rectSize}, offset: ${charWidth}`);
+                            charWidth = x * this.rectSize > charWidth ? x * this.rectSize : charWidth;
+                            //console.log(`Painted char '${c}' at ${x * this.rectSize}, ${y * this.rectSize}, offset: ${charWidth}`);
 
                         }
 
@@ -103,7 +134,7 @@
 
                 }
 
-                offsetX += charWidth + rectSize * 2;
+                offsetX += charWidth + this.rectSize * 2;
 
             } else {
 
@@ -113,7 +144,47 @@
 
         }
 
-        this.ctx.restore();
+        ctx.restore();
+
+    }
+
+    game.text._calculateTextWidth = function (str) {
+
+        let result = 0;
+
+        for (let i = 0; i < str.length; i++) {
+
+            let c = str[i];
+
+            if (this.chars[c]) {
+
+                let charWidth = 0;
+
+                for (let y = 0; y < this.chars[c].length; y++) {
+
+                    for (let x = 0; x < this.chars[c][y].length; x++) {
+
+                        if (this.chars[c][y][x]) {
+
+                            charWidth = x * this.rectSize > charWidth ? x * this.rectSize : charWidth;
+
+                        }
+
+                    }
+
+                }
+
+                result += charWidth + this.rectSize * 2;
+
+            } else {
+
+                console.warn(`char '${c}' does not exist in letters dictionary.`);
+
+            }
+
+        }
+
+        return result;
 
     }
     

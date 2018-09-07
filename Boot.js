@@ -20,7 +20,7 @@
 
         game.init();
 
-        requestAnimationFrame(game.loop.bind(game));
+        requestAnimationFrame(game.gameloop.bind(game));
 
     };
 

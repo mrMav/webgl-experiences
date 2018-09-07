@@ -9,7 +9,7 @@
 
     window.game = window.game || {};
     const game = window.game;
-
+    
     /*
      * Constants
      */
@@ -51,6 +51,11 @@
     game.score = 0;
     game.ellapsedtime = 0;
     game.endGame = false;
+
+
+    game.widthRatio  = 0;
+    game.heightRatio = 0;
+
 
     /*
      * Methods for gameplay
@@ -221,9 +226,7 @@
         for (let i = this.BOARD_HEIGHT - 1; i >= 0; i--) {
 
             if (this.board[i].indexOf(0) < 0) {
-
-                console.log("Score detected")
-
+                
                 // score	
                 completeLines++;
 
@@ -407,21 +410,24 @@
         // regardless of the resolution
         var height = window.innerHeight;
 
-        // So we need to calculate the proper scaled width
-        // that should work well with every resolution
-        var ratio = game.gl.canvas.width / game.gl.canvas.height;
-        var width = height * ratio;
+        game.widthRatio = game.gl.canvas.width / game.gl.canvas.height;
+        game.heightRatio = game.gl.canvas.height / game.gl.canvas.width;
+
+        var width = height * game.widthRatio;
 
         if (width > window.innerWidth) {
 
             width = window.innerWidth;
-            height = width * (game.gl.canvas.height / game.gl.canvas.width);
+            height = width * game.heightRatio;
 
         }
 
-
         game.gl.canvas.style.width = width + 'px';
         game.gl.canvas.style.height = height + 'px';
+
+        //game.gl.viewport(0, 0, game.gl.canvas.width, game.gl.canvas.height);
+        //game.projection = game.m4.ortho(-game.gl.canvas.width / 2, game.gl.canvas.width / 2, game.gl.canvas.height / 2, -game.gl.canvas.height / 2, -1, 1);
+        //game.m4.translate(game.projection, game.cameraPosition, game.projection);
 
     }
 

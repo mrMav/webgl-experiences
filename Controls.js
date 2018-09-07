@@ -4,6 +4,8 @@
  */
 (function () {
 
+    "use strict";
+
     window.game = window.game || {};
     const game = window.game;
 
