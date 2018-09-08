@@ -9,7 +9,7 @@
     window.game = window.game || {};
     const game = window.game;
 
-    game.init = function () {
+    game.gameinit = function () {
 
         // gl context
         this.gl = document.getElementById("c").getContext("webgl", { antialias: false });
@@ -352,6 +352,12 @@
 
 
         );
+
+        /*
+         * start the gameloop
+         */
+
+        requestAnimationFrame(this.gameloop.bind(this));
 
     }
 

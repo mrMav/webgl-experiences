@@ -198,8 +198,21 @@
 
                 if (matrixShape[ii][jj] === 1) {
 
+                    if (i >= this.board.length || j >= this.board[0].length) {
+
+                        // fail safe.
+                        // this means that we found a block in this piece
+                        // that was out of bounds. therefore, no rotation is allowed
+                        
+                        return true;
+
+                    }
+
                     if (this.board[i][j] != 0) {
 
+                        // here we found that there is a block in this cell.
+                        // we can rotate, because it would cause an overlap.
+                        
                         return true;
 
                     }

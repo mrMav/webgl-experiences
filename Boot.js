@@ -18,9 +18,7 @@
 
         });
 
-        game.init();
-
-        requestAnimationFrame(game.gameloop.bind(game));
+        game.gameinit();
 
     };
 
