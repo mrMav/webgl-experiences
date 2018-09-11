@@ -18,6 +18,17 @@
     game.hammer.add(new Hammer.Swipe({ event: "swiperight", direction: Hammer.DIRECTION_RIGHT }));
 
     /*
+     * start listening events from keyboard
+     */ 
+    window.addEventListener("keydown", function (evt) {
+
+        game.handleKeysUp(evt.keyCode)
+
+        evt.stopPropagation();
+
+    });
+
+    /*
      * This is the input function for a keyboard play
      */
     game.handleKeysUp = function (keycode) {
@@ -54,25 +65,51 @@
      * This is the input function handler for touch or mouse controls
      */
     game.handleTouchEvents = function (evt) {
+            
+        if (game.state === game.GAME_STATE) {
+            
+            if (evt.type = "tap") {
 
-        if (evt.type = "tap") {
+                let canvasRect = game.gl.canvas.getBoundingClientRect();
+                let middleDeadZone = canvasRect.width / 4;
 
-            let canvasRect = game.gl.canvas.getBoundingClientRect();
-            let middleDeadZone = canvasRect.width / 4;
+                if (evt.center.x < canvasRect.x + canvasRect.width / 2 - middleDeadZone / 2) {
+                    // left side
+                    this.handleLeftMoveEvent();
 
-            if (evt.center.x < canvasRect.x + canvasRect.width / 2 - middleDeadZone / 2) {
-                // left side
-                this.handleLeftMoveEvent();
+                } else if (evt.center.x > canvasRect.x + canvasRect.width / 2 + middleDeadZone / 2) {
+                    // right side
+                    this.handleRightMoveEvent();
 
-            } else if (evt.center.x > canvasRect.x + canvasRect.width / 2 + middleDeadZone / 2) {
-                // right side
-                this.handleRightMoveEvent();
+                } else {
+                    // middle dead zone
+                    this.handleRotateEvent();
 
-            } else {
-                // middle dead zone
-                this.handleRotateEvent();
+                }
 
             }
+
+        } else if (game.state === game.MENU_STATE) {
+
+            let canvasRect = game.gl.canvas.getBoundingClientRect();
+
+            // play button listen for taps or clicks
+            let model = this.models["modelButtonPlay"];
+            
+            let x = (evt.center.x - canvasRect.x) * this.widthRatio;
+            let y = (evt.center.y - canvasRect.y) * this.heightRatio;
+            
+            console.log(`${Math.round(model.x)},${Math.round(model.y)},${Math.round(model.width)},${Math.round(model.height)}`)
+            console.log(`${Math.round(x)},${Math.round(y)}`)
+
+            // model 0,0 at middle
+            if (x >= model.x - model.width / 2 && x <= model.x + model.width / 2 &&
+                y >= model.y - model.height / 2 && y <= model.y + model.height / 2) {
+
+                console.log("clicked on play")
+
+            }
+
 
         }
 
@@ -86,19 +123,22 @@
 
     game.hammer.on("swipedown", function (evt) {
 
-        game.handleThrowDownEvent();
+        if (game.state === game.GAME_STATE)
+            game.handleThrowDownEvent();
 
     });
 
     game.hammer.on("swipeleft", function (evt) {
 
-        game.handleThrowLeftEvent();
+        if (game.state === game.GAME_STATE)
+            game.handleThrowLeftEvent();
 
     });
 
     game.hammer.on("swiperight", function (evt) {
 
-        game.handleThrowRightEvent();
+        if (game.state === game.GAME_STATE)
+            game.handleThrowRightEvent();
 
     });
 

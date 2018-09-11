@@ -33,6 +33,12 @@
 
     game.MAXIMUM_DROP_INTERVAL = 1000;
     game.MINIMUM_DROP_INTERVAL = 50;
+    
+    game.MENU_STATE = 0;
+    game.GAME_STATE = 1;
+    game.OPTIONS = 2;
+    game.CREDITS = 3;
+    game.state = game.MENU_STATE;
 
     /*
      * Properties for gameplay
@@ -51,12 +57,10 @@
     game.score = 0;
     game.ellapsedtime = 0;
     game.endGame = false;
-
-
+    
     game.widthRatio  = 0;
     game.heightRatio = 0;
-
-
+    
     /*
      * Methods for gameplay
      */
@@ -71,7 +75,7 @@
 
 
     }
-    
+
     game.spawnShape = function (type) {
 
         type = type || "SHAPE_" + game.utils.randomInt(1, 7);
@@ -422,18 +426,17 @@
         // Our canvas must cover full height of screen
         // regardless of the resolution
         var height = window.innerHeight;
-
-        game.widthRatio = game.gl.canvas.width / game.gl.canvas.height;
-        game.heightRatio = game.gl.canvas.height / game.gl.canvas.width;
-
-        var width = height * game.widthRatio;
+        var width = height * (game.gl.canvas.width / game.gl.canvas.height);
 
         if (width > window.innerWidth) {
 
             width = window.innerWidth;
-            height = width * game.heightRatio;
+            height = width * (game.gl.canvas.height / game.gl.canvas.width);
 
         }
+
+        game.widthRatio = game.gl.canvas.width / width;
+        game.heightRatio = game.gl.canvas.height / height;
 
         game.gl.canvas.style.width = width + 'px';
         game.gl.canvas.style.height = height + 'px';

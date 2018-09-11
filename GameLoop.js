@@ -70,8 +70,6 @@
         // this is a puzzle game man...
         this.update(time);
 
-        requestAnimationFrame(game.gameloop.bind(this));
-
     }
 
 }());

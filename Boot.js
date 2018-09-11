@@ -10,16 +10,8 @@
 
     function boot() {
 
-        window.addEventListener("keydown", function (evt) {
-
-            game.handleKeysUp(evt.keyCode)
-
-            evt.stopPropagation();
-
-        });
-
-        game.gameinit();
-
+        game.init();
+        
     };
 
 }());
