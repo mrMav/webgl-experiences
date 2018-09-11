@@ -52,7 +52,7 @@
         this.m4.translate(this.projection, this.cameraPosition, this.projection);
 
         this.resize();
-
+        
         //generate a board
         for (let i = 0; i < this.BOARD_HEIGHT; i++) {
 

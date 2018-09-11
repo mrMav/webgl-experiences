@@ -33,6 +33,8 @@
 
     game.MAXIMUM_DROP_INTERVAL = 1000;
     game.MINIMUM_DROP_INTERVAL = 50;
+    game.LINES_UNTIL_MAX_INTERVAL = 100;
+    game.SCORE_PER_LINE = 100;
     
     game.MENU_STATE = 0;
     game.GAME_STATE = 1;
@@ -57,6 +59,8 @@
     game.spawnNewShape = false;
     game.score = 0;
     game.highscore = 0;
+    game.completedLines = 0;
+    game.highestCompletedLines = 0;
     game.ellapsedtime = 0;
     game.endGame = false;
     
@@ -70,11 +74,13 @@
 
     game.calculateInterval = function () {
         /*
-         * Exponencial interval calculation
-         * based on the maximum possible
+         * https://www.desmos.com/calculator/usvbpvbcdn
          */
 
-        return 50 * Math.pow(2, 10 * (game.score / 999998)) + game.MAXIMUM_DROP_INTERVAL;
+        let a = Math.sqrt(this.MAXIMUM_DROP_INTERVAL - this.MINIMUM_DROP_INTERVAL);
+        let b = a / this.LINES_UNTIL_MAX_INTERVAL;
+        let c = Math.pow((a - (this.completedLines * b)), 2) + this.MINIMUM_DROP_INTERVAL;
+        return c;
 
 
     }
@@ -145,13 +151,28 @@
 
             // end game
             // set highscore
-            if (game.score > game.highscore && game.storage.available) {
+            if (game.storage.available) {
 
-                game.highscore = game.score;
+                if (game.score > game.highscore) {
 
-                window.localStorage.setItem("score", game.highscore);
+                    game.highscore = game.score;
+
+                    window.localStorage.setItem("score", game.highscore);
+
+                }
+
+                if (game.completedLines > game.highestCompletedLines) {
+
+                    game.highestCompletedLines = game.completedLines;
+
+                    window.localStorage.setItem("lines", game.highestCompletedLines);
+
+
+                }
+
 
             }
+
 
             game.state = game.MENU_STATE;            
 
@@ -253,7 +274,6 @@
         // look up for zeros.
         // if no zeros, it is a score.
 
-        let score = 0;
         let completeLines = 0;
         let totalScore = 0;
 
@@ -276,12 +296,18 @@
 
         }
 
-        totalScore = completeLines * 100;
-        this.score += totalScore;
-        this.interval -= this.interval <= game.MINIMUM_DROP_INTERVAL ? 0 : completeLines * 20;
+        if (completeLines > 0) {
 
-        //console.log(game.calculateInterval())
+            totalScore = completeLines * 100;
+            this.completedLines += completeLines;
+            this.score += totalScore;
 
+            //this.interval -= this.interval <= game.MINIMUM_DROP_INTERVAL ? 0 : completeLines * 20;
+            this.interval = this.calculateInterval();
+
+            console.log(this.calculateInterval())
+
+        }
     }
 
     game.transferShapeToBoard = function () {
@@ -446,6 +472,7 @@
         game.interval = game.MAXIMUM_DROP_INTERVAL;
         game.spawnNewShape = false;
         game.score = 0;
+        game.completedLines = 0;
         game.ellapsedtime = 0;
         game.endGame = false;
         
@@ -468,6 +495,7 @@
         this.spawnShape();
 
         game.startedat = performance.now();
+              
 
     }
 
