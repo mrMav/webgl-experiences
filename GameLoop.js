@@ -11,7 +11,7 @@
 
     game.gameloop = function (time) {
 
-        this.ellapsedtime = time;
+        this.ellapsedtime = performance.now() - game.startedat;
 
         // update and clear viewport        
         this.gl.clear(this.gl.COLOR_BUFFER_BIT);

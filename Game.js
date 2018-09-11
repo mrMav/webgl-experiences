@@ -46,6 +46,7 @@
 
     game.lastframe = 0;
     game.lasttime = 0;
+    game.startedat = 0;
     game.interval = 0;
     game.counter = 0;
     game.board = [];
@@ -453,6 +454,8 @@
         // create a first shape
         this.nextShape = new game.shape("SHAPE_" + this.utils.randomInt(1, 7));
         this.spawnShape();
+
+        game.startedat = performance.now();
 
     }
 
