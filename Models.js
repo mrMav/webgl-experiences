@@ -69,8 +69,8 @@
         game.m4.scale(
             model.uniforms.u_worldViewProjection,
             [
-                model.width,
-                model.height,
+                model.width / 2,
+                model.height / 2,
                 1
             ],
             model.uniforms.u_worldViewProjection);

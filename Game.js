@@ -38,7 +38,7 @@
     game.GAME_STATE = 1;
     game.OPTIONS = 2;
     game.CREDITS = 3;
-    game.state = game.GAME_STATE;
+    game.state = game.MENU_STATE;
 
     /*
      * Properties for gameplay
@@ -137,6 +137,10 @@
             }
 
             game.checkCompleteLines();
+
+        } else {
+
+            game.state = game.MENU_STATE;            
 
         }
 
@@ -413,6 +417,42 @@
             this.currentShape.rotation = this.currentShape.rotation - 1 < 0 ? 3 : this.currentShape.rotation - 1;
 
         }
+
+    }
+
+    game.reset = function() {
+
+        game.lastframe = 0;
+        game.lasttime = 0;
+        game.interval = 0;
+        game.counter = 0;
+        game.board = [];
+        game.currentShape = null;
+        game.nextShape = null;
+        game.lastFrame = 0;
+        game.interval = game.MAXIMUM_DROP_INTERVAL;
+        game.spawnNewShape = false;
+        game.score = 0;
+        game.ellapsedtime = 0;
+        game.endGame = false;
+        
+        for (let i = 0; i < this.BOARD_HEIGHT; i++) {
+
+            let r = [];
+
+            for (let j = 0; j < this.BOARD_WIDTH; j++) {
+
+                r.push(0);
+
+            }
+
+            this.board.push(r);
+
+        }
+
+        // create a first shape
+        this.nextShape = new game.shape("SHAPE_" + this.utils.randomInt(1, 7));
+        this.spawnShape();
 
     }
 

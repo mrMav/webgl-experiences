@@ -88,8 +88,12 @@
         );
 
         this.text.rectSize = 6;
-        this.text.createTextTexture(this.GAME_SCREEN_WIDTH / 3, this.FONT_SIZE_3 + 4, ".", "playtext", { minMag: this.gl.NEAREST });
+        this.text.foreground = "rgba(000, 000, 000, 255)";
+        this.text.background = "rgba(255, 255, 255, 255)";
+        this.text.createTextTexture(this.GAME_SCREEN_WIDTH / 3, this.FONT_SIZE_3 + 4, "PLAY!", "playtext", { minMag: this.gl.NEAREST });
         this.text.rectSize = 2;
+        this.text.foreground = "rgba(255, 255, 255, 255)";
+        this.text.background = "rgba(0, 0, 0, 255)";
         this.text.createTextTexture(this.GAME_SCREEN_WIDTH / 3, this.FONT_SIZE_3 + 4, "MAX SCORE:", "maxscoretext", { minMag: this.gl.NEAREST });
         this.text.rectSize = 6;
         this.text.createTextTexture(this.SCORE_RECT_WIDTH, this.SCORE_RECT_HEIGHT, "000000", "score", { minMag: this.gl.NEAREST });
@@ -244,9 +248,9 @@
 
             this.MARGIN_TOP / 4,
 
-            this.SCORE_RECT_WIDTH / 2,
+            this.SCORE_RECT_WIDTH,
 
-            this.SCORE_RECT_HEIGHT / 2,
+            this.SCORE_RECT_HEIGHT,
 
             "meshQuad",
 
@@ -304,9 +308,9 @@
 
             this.MARGIN_TOP / 4 + this.SCORE_RECT_HEIGHT + 2,
 
-            this.SCORE_RECT_WIDTH / 2,
+            this.SCORE_RECT_WIDTH,
 
-            this.SCORE_RECT_HEIGHT / 2,
+            this.SCORE_RECT_HEIGHT,
 
             "meshQuad",
 

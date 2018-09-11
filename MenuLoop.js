@@ -20,18 +20,18 @@
         const button = this.buttons["playButton"];
         this.buttons.renderButton(button);
 
-        //// render max score quad
-        //this.models.render(this.models["modelMaxScore"]);
+        // render max score quad
+        this.models.render(this.models["modelMaxScore"]);
 
-        //let model = this.models["modelScore"];
-        //model.x = this.GAME_SCREEN_WIDTH / 2;
-        //model.y = this.GAME_SCREEN_HEIGHT * 0.65;
+        let model = this.models["modelScore"];
+        model.x = this.GAME_SCREEN_WIDTH / 2;
+        model.y = this.GAME_SCREEN_HEIGHT * 0.65;
 
-        //this.models.update(model, this.projection);
-        //this.models.render(this.models["modelScore"]);
+        this.models.update(model, this.projection);
+        this.models.render(this.models["modelScore"]);
 
-        //this.models["modelFullGameAreaLines"].uniforms.u_worldViewProjection = this.projection;
-        //this.models.render(this.models["modelFullGameAreaLines"]);
+        this.models["modelFullGameAreaLines"].uniforms.u_worldViewProjection = this.projection;
+        this.models.render(this.models["modelFullGameAreaLines"]);
         
     }
 

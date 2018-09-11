@@ -37,8 +37,8 @@
 
                     model.x = x * this.TILE_SIZE + this.TILE_SIZE / 2 + this.MARGIN_LEFT;
                     model.y = y * this.TILE_SIZE + this.TILE_SIZE / 2 + this.MARGIN_TOP;
-                    model.width  = this.TILE_SIZE / 2 - this.TILE_MARGIN / 2;
-                    model.height = this.TILE_SIZE / 2 - this.TILE_MARGIN / 2;
+                    model.width  = this.TILE_SIZE - this.TILE_MARGIN;
+                    model.height = this.TILE_SIZE - this.TILE_MARGIN;
 
                     this.models.update(model, this.projection);
                     this.models.render(model);
@@ -50,7 +50,11 @@
         }
 
         // render score quad
-        this.models.render(this.models["modelScore"]);
+        let model = this.models["modelScore"];
+        model.x = this.GAME_SCREEN_WIDTH / 2;
+        model.y = this.MARGIN_TOP / 4;
+        this.models.update(model, this.projection);
+        this.models.render(model);
 
         // render timer quad
         this.models.render(this.models["modelTimer"]);
