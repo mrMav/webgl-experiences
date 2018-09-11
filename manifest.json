@@ -3,5 +3,6 @@
   "name": "Puzzle Game",
   "start_url": "index.html",
   "display": "fullscreen",
-  "orientation": "portrait"
+  "orientation": "portrait",
+  "background_color": "#000000"
 }
