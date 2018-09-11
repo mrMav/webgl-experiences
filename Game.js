@@ -56,11 +56,13 @@
     game.interval = game.MAXIMUM_DROP_INTERVAL;
     game.spawnNewShape = false;
     game.score = 0;
+    game.highscore = 0;
     game.ellapsedtime = 0;
     game.endGame = false;
     
     game.widthRatio  = 0;
     game.heightRatio = 0;
+
     
     /*
      * Methods for gameplay
@@ -140,6 +142,16 @@
             game.checkCompleteLines();
 
         } else {
+
+            // end game
+            // set highscore
+            if (game.score > game.highscore && game.storage.available) {
+
+                game.highscore = game.score;
+
+                window.localStorage.setItem("score", game.highscore);
+
+            }
 
             game.state = game.MENU_STATE;            
 

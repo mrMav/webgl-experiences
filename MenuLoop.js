@@ -20,15 +20,23 @@
         const button = this.buttons["playButton"];
         this.buttons.renderButton(button);
 
-        // render max score quad
-        this.models.render(this.models["modelMaxScore"]);
+        if (this.storage.available) {
 
-        let model = this.models["modelScore"];
-        model.x = this.GAME_SCREEN_WIDTH / 2;
-        model.y = this.GAME_SCREEN_HEIGHT * 0.65;
+            // update the score text
+            this.text.foreground = "#ffffff";
+            this.text.updateTextureText("score", this.utils.convertScoreIntToString(game.highscore, 6));     
+            
+            // render max score quad
+            this.models.render(this.models["modelMaxScore"]);
 
-        this.models.update(model, this.projection);
-        this.models.render(this.models["modelScore"]);
+            let model = this.models["modelScore"];
+            model.x = this.GAME_SCREEN_WIDTH / 2;
+            model.y = this.GAME_SCREEN_HEIGHT * 0.65;
+
+            this.models.update(model, this.projection);
+            this.models.render(this.models["modelScore"]);
+                       
+        }
 
         this.models["modelFullGameAreaLines"].uniforms.u_worldViewProjection = this.projection;
         this.models.render(this.models["modelFullGameAreaLines"]);

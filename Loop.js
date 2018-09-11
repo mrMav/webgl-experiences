@@ -15,7 +15,6 @@
 
             case this.MENU_STATE:
 
-                // TODO
                 this.menuloop(time);
                 break;
 

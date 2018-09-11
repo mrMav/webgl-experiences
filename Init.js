@@ -11,6 +11,22 @@
 
     game.init = function () {
 
+        // test storage availability
+        this.storage.available = this.storage.storageAvailable("localStorage");
+
+        // fetch for an highscore:
+        if (this.storage.available) {
+
+            let score = window.localStorage.getItem("score");
+
+            if (score) {
+
+                game.highscore = parseInt(score);
+
+            }
+
+        }
+
         // gl context
         this.gl = document.getElementById("c").getContext("webgl", { antialias: false });
 
@@ -91,10 +107,10 @@
         this.text.foreground = "rgba(000, 000, 000, 255)";
         this.text.background = "rgba(255, 255, 255, 255)";
         this.text.createTextTexture(this.GAME_SCREEN_WIDTH / 3, this.FONT_SIZE_3 + 4, "PLAY!", "playtext", { minMag: this.gl.NEAREST });
-        this.text.rectSize = 2;
+        this.text.rectSize = 4;
         this.text.foreground = "rgba(255, 255, 255, 255)";
         this.text.background = "rgba(0, 0, 0, 255)";
-        this.text.createTextTexture(this.GAME_SCREEN_WIDTH / 3, this.FONT_SIZE_3 + 4, "MAX SCORE:", "maxscoretext", { minMag: this.gl.NEAREST });
+        this.text.createTextTexture(this.GAME_SCREEN_WIDTH / 3, this.FONT_SIZE_3 + 4, "HIGHSCORE:", "maxscoretext", { minMag: this.gl.NEAREST });
         this.text.rectSize = 6;
         this.text.createTextTexture(this.SCORE_RECT_WIDTH, this.SCORE_RECT_HEIGHT, "000000", "score", { minMag: this.gl.NEAREST });
         this.text.foreground = "rgba(165, 165, 165, 255)";
