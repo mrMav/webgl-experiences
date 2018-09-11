@@ -21,7 +21,7 @@
         this.keyboard = new Keyboard();
 
         // webgl context properties set
-        this.gl.clearColor(1.0, 0.0, 1.0, 1.0);
+        this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
         this.gl.canvas.width = this.GAME_SCREEN_WIDTH;
         this.gl.canvas.height = this.GAME_SCREEN_HEIGHT;
 

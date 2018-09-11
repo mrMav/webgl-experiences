@@ -38,7 +38,7 @@
     game.GAME_STATE = 1;
     game.OPTIONS = 2;
     game.CREDITS = 3;
-    game.state = game.MENU_STATE;
+    game.state = game.GAME_STATE;
 
     /*
      * Properties for gameplay
