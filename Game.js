@@ -302,6 +302,19 @@
             this.completedLines += completeLines;
             this.score += totalScore;
 
+            let vibrationPattern = [];
+            let pause = 30;
+            let vib = 50;
+
+            for (let i = 0; i < completeLines; i++) {
+
+                vibrationPattern.push(vib);
+                vibrationPattern.push(pause);
+
+            }
+
+            navigator.vibrate(vibrationPattern);
+
             //this.interval -= this.interval <= game.MINIMUM_DROP_INTERVAL ? 0 : completeLines * 20;
             this.interval = this.calculateInterval();
 
@@ -338,7 +351,7 @@
             if (this.currentShape.position.x + 4 - this.currentShape.marginRight < game.BOARD_WIDTH) {  // 4 is the number of the shape width
 
                 this.currentShape.moveRight();
-
+                
             }
 
         }
@@ -352,7 +365,7 @@
             if (this.currentShape.position.x + this.currentShape.marginLeft > 0) {
 
                 this.currentShape.moveLeft();
-
+                
             }
 
         }
@@ -387,6 +400,8 @@
 
             } else {
 
+                navigator.vibrate(150);
+
                 break;
 
             }
@@ -405,6 +420,8 @@
 
             } else {
 
+                navigator.vibrate(150);
+
                 break;
 
             }
@@ -422,6 +439,8 @@
                 this.currentShape.moveRight();
 
             } else {
+
+                navigator.vibrate(150);
 
                 break;
 

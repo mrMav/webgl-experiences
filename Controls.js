@@ -87,6 +87,8 @@
 
                 }
 
+                navigator.vibrate(100);
+
             }
 
         } else if (game.state === game.MENU_STATE) {
