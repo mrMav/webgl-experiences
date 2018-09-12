@@ -95,21 +95,24 @@
 
             let canvasRect = game.gl.canvas.getBoundingClientRect();
 
-            // play button listen for taps or clicks
-            let model = this.models["modelButtonPlay"];
-            
             let x = (evt.center.x - canvasRect.x) * this.widthRatio;
             let y = (evt.center.y - canvasRect.y) * this.heightRatio;
-            
-            //console.log(`${Math.round(model.x)},${Math.round(model.y)},${Math.round(model.width)},${Math.round(model.height)}`)
-            //console.log(`${Math.round(x)},${Math.round(y)}`)
 
-            // model 0,0 at middle
-            if (x >= model.x - model.width / 2 && x <= model.x + model.width / 2 &&
-                y >= model.y - model.height / 2 && y <= model.y + model.height / 2) {
+            for (let key in this.buttons) {
 
-                game.reset();
-                game.state = game.GAME_STATE;
+                if (typeof(this.buttons[key]) !== 'function') {
+
+                    let model = this.buttons[key].model;
+
+                    // model 0,0 at middle
+                    if (x >= model.x - model.width / 2 && x <= model.x + model.width / 2 &&
+                        y >= model.y - model.height / 2 && y <= model.y + model.height / 2) {
+
+                        this.buttons[key].callback(evt);
+                        
+                    }
+
+                }
 
             }
 

@@ -110,12 +110,13 @@
         this.text.rectSize = 4;
         this.text.foreground = "rgba(255, 255, 255, 255)";
         this.text.background = "rgba(0, 0, 0, 255)";
+        this.text.createTextTexture(this.text._calculateTextWidth("vibration: (x)"), this.FONT_SIZE_3 + 4, "vibration: (x)", "optionvibration", { minMag: this.gl.NEAREST });
         this.text.createTextTexture(this.GAME_SCREEN_WIDTH / 3, this.FONT_SIZE_3 + 4, "HIGHSCORE:", "maxscoretext", { minMag: this.gl.NEAREST });
         this.text.rectSize = 6;
-        this.text.createTextTexture(this.SCORE_RECT_WIDTH, this.SCORE_RECT_HEIGHT, "000000", "score", { minMag: this.gl.NEAREST });
         this.text.foreground = "rgba(165, 165, 165, 255)";
+        this.text.createTextTexture(this.SCORE_RECT_WIDTH, this.SCORE_RECT_HEIGHT, "000000", "score", { minMag: this.gl.NEAREST });
         this.text.createTextTexture(this.SCORE_RECT_WIDTH, this.SCORE_RECT_HEIGHT, "000000", "timer", { minMag: this.gl.NEAREST });
-
+        
         /*
          * Create meshes
          */
@@ -376,6 +377,36 @@
 
         );
 
+        this.models.createObject( 
+
+            "modelOptionVibration",
+
+            this.GAME_SCREEN_WIDTH / 2,
+
+            this.GAME_SCREEN_HEIGHT * 0.8,
+
+            this.textures["optionvibration"].ctx.canvas.width,
+
+            this.textures["optionvibration"].ctx.canvas.height,
+
+            "meshQuad",
+
+            {
+                u_worldViewProjection: this.m4.identity(),
+
+                u_diffuse: this.textures["optionvibration"].webglTexture,
+
+                u_color: [1.0, 1.0, 1.0, 1.0],
+
+                u_time: 0
+            },
+
+            "texture_shader",
+
+            this.gl.TRIANGLES
+
+        );
+
         this.models.createObject(
 
             "modelPuzzleAreaLines",
@@ -452,8 +483,48 @@
 
             this.models["modelButtonPlay"],
 
-            function () { console.log("play button pressed") }
+            function () {
 
+                game.reset();
+                game.state = game.GAME_STATE;
+
+            }
+
+
+        );
+
+        this.buttons.createButton(   //name, x, y, w, h, model, callback
+
+            "optionButtonVibration",
+
+            this.models["modelOptionVibration"],
+
+            function () {
+
+                let temp = game.text.rectSize;
+
+                game.text.rectSize = 4;
+
+                if (game.vibration) {
+
+                    game.text.updateTextureText("optionvibration", "vibration: ( )");
+
+                    game.vibration = false;
+
+
+                } else {
+
+                    game.text.updateTextureText("optionvibration", "vibration: (x)");
+
+                    game.vibration = true;
+
+                    game.vibrate(30);
+
+                }
+
+                game.text.rectSize = temp;
+
+            }
 
         );
         

@@ -16,9 +16,8 @@
         // update and clear viewport        
         this.gl.clear(this.gl.COLOR_BUFFER_BIT);
         
-        // update the play button
-        const button = this.buttons["playButton"];
-        this.buttons.renderButton(button);
+        this.buttons.renderButton(this.buttons["playButton"]);
+        this.buttons.renderButton(this.buttons["optionButtonVibration"]);
 
         if (this.storage.available) {
 

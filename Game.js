@@ -42,6 +42,12 @@
     game.CREDITS = 3;
     game.state = game.MENU_STATE;
 
+    game.vibration = true;
+    game.VIBRATION_INTENSITY_1 = 30;
+    game.VIBRATION_INTENSITY_2 = 50;
+    game.VIBRATION_INTENSITY_3 = 100;
+    game.VIBRATION_PAUSE_1 = 30;
+
     /*
      * Properties for gameplay
      */
@@ -67,6 +73,15 @@
     game.widthRatio  = 0;
     game.heightRatio = 0;
 
+    game.vibrate = function (pattern) {
+
+        if (this.vibration) {
+
+            navigator.vibrate(pattern);
+
+        }
+
+    }
     
     /*
      * Methods for gameplay
@@ -313,7 +328,7 @@
 
             }
 
-            navigator.vibrate(vibrationPattern);
+            this.vibrate(vibrationPattern);
 
             //this.interval -= this.interval <= game.MINIMUM_DROP_INTERVAL ? 0 : completeLines * 20;
             this.interval = this.calculateInterval();
@@ -400,7 +415,7 @@
 
             } else {
 
-                navigator.vibrate(50);
+                this.vibrate(50);
 
                 break;
 
@@ -420,7 +435,7 @@
 
             } else {
 
-                navigator.vibrate(50);
+                this.vibrate(50);
 
                 break;
 
@@ -440,7 +455,7 @@
 
             } else {
 
-                navigator.vibrate(50);
+                this.vibrate(50);
 
                 break;
 

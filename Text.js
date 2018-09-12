@@ -85,7 +85,7 @@
         let centerY = 0;
         let offsetY = 0;
         let offsetX = 0;
-        let totalTextWidth = this._calculateTextWidth(string);
+        let totalTextWidth = this._calculateTextWidth(str);
         let totalTextHeight = this.rectSize * 5;
 
         if (this.alignHorizontal === "center") {
@@ -151,6 +151,8 @@
     game.text._calculateTextWidth = function (str) {
 
         let result = 0;
+
+        str = str.toUpperCase();
 
         for (let i = 0; i < str.length; i++) {
 
