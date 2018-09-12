@@ -65,10 +65,12 @@
      * This is the input function handler for touch or mouse controls
      */
     game.handleTouchEvents = function (evt) {
-            
-        if (game.state === game.GAME_STATE) {
-            
-            if (evt.type = "tap") {
+
+        if (evt.type = "tap") {
+
+            this.vibrate(this.VIBRATION_INTENSITY_1);
+
+            if (game.state === game.GAME_STATE) {
 
                 let canvasRect = game.gl.canvas.getBoundingClientRect();
                 let middleDeadZone = canvasRect.width / 4;
@@ -87,35 +89,33 @@
 
                 }
 
-                navigator.vibrate(30);
 
-            }
+            } else if (game.state === game.MENU_STATE) {
 
-        } else if (game.state === game.MENU_STATE) {
+                let canvasRect = game.gl.canvas.getBoundingClientRect();
 
-            let canvasRect = game.gl.canvas.getBoundingClientRect();
+                let x = (evt.center.x - canvasRect.x) * this.widthRatio;
+                let y = (evt.center.y - canvasRect.y) * this.heightRatio;
 
-            let x = (evt.center.x - canvasRect.x) * this.widthRatio;
-            let y = (evt.center.y - canvasRect.y) * this.heightRatio;
+                for (let key in this.buttons) {
 
-            for (let key in this.buttons) {
+                    if (typeof (this.buttons[key]) !== 'function') {
 
-                if (typeof(this.buttons[key]) !== 'function') {
+                        let model = this.buttons[key].model;
 
-                    let model = this.buttons[key].model;
+                        // model 0,0 at middle
+                        if (x >= model.x - model.width / 2 && x <= model.x + model.width / 2 &&
+                            y >= model.y - model.height / 2 && y <= model.y + model.height / 2) {
 
-                    // model 0,0 at middle
-                    if (x >= model.x - model.width / 2 && x <= model.x + model.width / 2 &&
-                        y >= model.y - model.height / 2 && y <= model.y + model.height / 2) {
+                            this.buttons[key].callback(evt);
 
-                        this.buttons[key].callback(evt);
-                        
+                        }
+
                     }
 
                 }
 
             }
-
 
         }
 

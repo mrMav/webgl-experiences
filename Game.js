@@ -323,8 +323,8 @@
 
             for (let i = 0; i < completeLines; i++) {
 
-                vibrationPattern.push(vib);
-                vibrationPattern.push(pause);
+                vibrationPattern.push(this.VIBRATION_INTENSITY_2);
+                vibrationPattern.push(this.VIBRATION_PAUSE_1);
 
             }
 
@@ -435,7 +435,7 @@
 
             } else {
 
-                this.vibrate(50);
+                this.vibrate(this.VIBRATION_INTENSITY_2);
 
                 break;
 
@@ -455,7 +455,7 @@
 
             } else {
 
-                this.vibrate(50);
+                this.vibrate(this.VIBRATION_INTENSITY_2);
 
                 break;
 
