@@ -400,7 +400,7 @@
 
             } else {
 
-                navigator.vibrate(150);
+                navigator.vibrate(50);
 
                 break;
 
@@ -420,7 +420,7 @@
 
             } else {
 
-                navigator.vibrate(150);
+                navigator.vibrate(50);
 
                 break;
 
@@ -440,7 +440,7 @@
 
             } else {
 
-                navigator.vibrate(150);
+                navigator.vibrate(50);
 
                 break;
 

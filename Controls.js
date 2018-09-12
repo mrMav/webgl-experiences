@@ -87,7 +87,7 @@
 
                 }
 
-                navigator.vibrate(100);
+                navigator.vibrate(30);
 
             }
 
