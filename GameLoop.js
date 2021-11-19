@@ -22,8 +22,11 @@
         this.text.foreground = "#777777";
         this.text.updateTextureText("timer", this.utils.convertScoreIntToString(Math.floor(this.ellapsedtime * 0.001), 6))
 
+        // render the shadow of the next shape
+        this.nextShape.render(this.projection, true);
+
         // render current falling shape
-        this.currentShape.render(this.projection);
+        this.currentShape.render(this.projection, false);
 
         // for each board position, render a quad
         // only if the value is 1

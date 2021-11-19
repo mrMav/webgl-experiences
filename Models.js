@@ -44,13 +44,15 @@
 
     };
 
-    game.models.render = function (model) {
+    game.models.render = function (model, uniforms) {
+
+        let _uniforms = uniforms ? uniforms : model.uniforms;
 
         const shader = game.shaders.use(model.shaderId);
         const mesh = game.meshes[model.meshId];
 
         twgl.setBuffersAndAttributes(game.gl, shader, mesh.buffers);
-        twgl.setUniforms(shader, model.uniforms);
+        twgl.setUniforms(shader, _uniforms);
         twgl.drawBufferInfo(game.gl, mesh.buffers, model.renderMode);
 
     }

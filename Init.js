@@ -103,6 +103,27 @@
 
         );
 
+        this.textures.createTexture(
+
+            "background",
+
+            {
+
+                minMag: this.gl.NEAREST,
+
+                src: [
+
+                    // 1                  // 2 
+                    20, 20, 20, 20, 20, 20, 20, 20,
+                    // 3                  //4 
+                    20, 20, 20, 20, 20, 20, 20, 20,
+
+                ]
+
+            }
+
+        );
+
         this.text.rectSize = 6;
         this.text.foreground = "rgba(000, 000, 000, 255)";
         this.text.background = "rgba(255, 255, 255, 255)";
