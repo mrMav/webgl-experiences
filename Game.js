@@ -108,7 +108,8 @@
 
         this.nextShape = new game.shape(type);
 
-        this.nextShape.position.x = this.BOARD_WIDTH + 1;
+        this.nextShape.position.x = Math.floor(this.BOARD_WIDTH / 2) - 2;
+        this.nextShape.position.y = -this.currentShape.marginUp;
 
         this.currentShape.position.x = Math.floor(this.BOARD_WIDTH / 2) - 2;
         this.currentShape.position.y = -this.currentShape.marginUp;

@@ -25,7 +25,7 @@
 
     }
 
-    game.shape.prototype.render = function (projection) {
+    game.shape.prototype.render = function (projection, isBackground) {
 
         for (var i = 0; i < game.shapes[this.type].rotations[this.rotation].length; i++) {
 
@@ -47,6 +47,11 @@
 
                     quadModel.uniforms.u_time = 0;
 
+                    if(isBackground)
+                    {
+                        quadModel.uniforms.u_diffuse = game.textures["background"];
+                    }
+
                     game.models.render(quadModel);
 
                     // ---
@@ -56,6 +61,8 @@
             }
 
         }
+
+        game.models["modelQuad"].uniforms.u_diffuse = game.textures["default"]
 
     }
 
