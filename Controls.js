@@ -128,7 +128,7 @@
             
             let dir = evt.detail.data[0].currentDirection;
             
-            let tolerance = 15;
+            let tolerance = 20;
             
             if(dir <= tolerance || dir >= 360 - tolerance){
                 
@@ -136,13 +136,13 @@
                 
             }
 
-            if(dir >= 90 + tolerance && dir <= 270 - tolerance){
+            if(dir >= 180 - tolerance && dir <= 180 + tolerance){
                 
                 game.handleThrowLeftEvent();  
                 
             }
 
-            if(dir > 270 - tolerance && dir < 360 - tolerance){
+            if(dir >= 270 - tolerance && dir <= 270 + tolerance){
                 
                 game.handleThrowDownEvent();  
                 
