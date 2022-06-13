@@ -9,14 +9,6 @@
     window.game = window.game || {};
     const game = window.game;
 
-    // input by hammer
-    // see in the bottom the implementation of the handler functions
-    game.hammer = new Hammer.Manager(document.getElementById("c"));
-    game.hammer.add(new Hammer.Tap({ event: "tap", tap: 1 }));
-    game.hammer.add(new Hammer.Swipe({ event: "swipedown", direction: Hammer.DIRECTION_DOWN }));
-    game.hammer.add(new Hammer.Swipe({ event: "swipeleft", direction: Hammer.DIRECTION_LEFT }));
-    game.hammer.add(new Hammer.Swipe({ event: "swiperight", direction: Hammer.DIRECTION_RIGHT }));
-
     /*
      * start listening events from keyboard
      */ 
@@ -66,50 +58,49 @@
      */
     game.handleTouchEvents = function (evt) {
 
-        if (evt.type = "tap") {
+        let evtX = evt.detail.events[0].clientX;
+        let evtY = evt.detail.events[0].clientY;
 
-            this.vibrate(this.VIBRATION_INTENSITY_1);
+        this.vibrate(this.VIBRATION_INTENSITY_1);
 
-            if (game.state === game.GAME_STATE) {
+        if (game.state === game.GAME_STATE) {
 
-                let canvasRect = game.gl.canvas.getBoundingClientRect();
-                let middleDeadZone = canvasRect.width / 4;
+            let canvasRect = game.gl.canvas.getBoundingClientRect();
+            let middleDeadZone = canvasRect.width / 4;
 
-                if (evt.center.x < canvasRect.x + canvasRect.width / 2 - middleDeadZone / 2) {
-                    // left side
-                    this.handleLeftMoveEvent();
+            if (evtX < canvasRect.x + canvasRect.width / 2 - middleDeadZone / 2) {
+                // left side
+                this.handleLeftMoveEvent();
 
-                } else if (evt.center.x > canvasRect.x + canvasRect.width / 2 + middleDeadZone / 2) {
-                    // right side
-                    this.handleRightMoveEvent();
+            } else if (evtX > canvasRect.x + canvasRect.width / 2 + middleDeadZone / 2) {
+                // right side
+                this.handleRightMoveEvent();
 
-                } else {
-                    // middle dead zone
-                    this.handleRotateEvent();
+            } else {
+                // middle dead zone
+                this.handleRotateEvent();
 
-                }
+            }
 
 
-            } else if (game.state === game.MENU_STATE) {
+        } else if (game.state === game.MENU_STATE) {
 
-                let canvasRect = game.gl.canvas.getBoundingClientRect();
+            let canvasRect = game.gl.canvas.getBoundingClientRect();
 
-                let x = (evt.center.x - canvasRect.x) * this.widthRatio;
-                let y = (evt.center.y - canvasRect.y) * this.heightRatio;
+            let x = (evtX - canvasRect.x) * this.widthRatio;
+            let y = (evtY - canvasRect.y) * this.heightRatio;
 
-                for (let key in this.buttons) {
+            for (let key in this.buttons) {
 
-                    if (typeof (this.buttons[key]) !== 'function') {
+                if (typeof (this.buttons[key]) !== 'function') {
 
-                        let model = this.buttons[key].model;
+                    let model = this.buttons[key].model;
 
-                        // model 0,0 at middle
-                        if (x >= model.x - model.width / 2 && x <= model.x + model.width / 2 &&
-                            y >= model.y - model.height / 2 && y <= model.y + model.height / 2) {
+                    // model 0,0 at middle
+                    if (x >= model.x - model.width / 2 && x <= model.x + model.width / 2 &&
+                        y >= model.y - model.height / 2 && y <= model.y + model.height / 2) {
 
-                            this.buttons[key].callback(evt);
-
-                        }
+                        this.buttons[key].callback(evt);
 
                     }
 
@@ -121,31 +112,44 @@
 
     }
 
-    game.hammer.on("tap", function (evt) {
+    // input by zingtouch
+    let touchArea = document.getElementById("c");
+    game.touch = new ZingTouch.Region(touchArea);
+
+    game.touch.bind(touchArea, "tap", function(evt) {
 
         game.handleTouchEvents(evt);
 
-    });
+    }, false);
 
-    game.hammer.on("swipedown", function (evt) {
+    game.touch.bind(touchArea, "swipe", function(evt) {
 
-        if (game.state === game.GAME_STATE)
-            game.handleThrowDownEvent();
+        if(game.state === game.GAME_STATE){
+            
+            let dir = evt.detail.data[0].currentDirection;
+            
+            let tolerance = 15;
+            
+            if(dir <= tolerance || dir >= 360 - tolerance){
+                
+                game.handleThrowRightEvent();
+                
+            }
 
-    });
+            if(dir >= 90 + tolerance && dir <= 270 - tolerance){
+                
+                game.handleThrowLeftEvent();  
+                
+            }
 
-    game.hammer.on("swipeleft", function (evt) {
+            if(dir > 270 - tolerance && dir < 360 - tolerance){
+                
+                game.handleThrowDownEvent();  
+                
+            }
 
-        if (game.state === game.GAME_STATE)
-            game.handleThrowLeftEvent();
-
-    });
-
-    game.hammer.on("swiperight", function (evt) {
-
-        if (game.state === game.GAME_STATE)
-            game.handleThrowRightEvent();
-
-    });
+        }
+            
+    }, false);
 
 }());
